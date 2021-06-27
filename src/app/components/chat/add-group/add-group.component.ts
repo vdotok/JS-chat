@@ -36,6 +36,7 @@ export class AddGroupComponent implements OnInit {
   selectedUsers = [];
   CopyAllUsers = [];
   @ViewChild('searchInput') searchInput: ElementRef;
+  @Output() setActiveChat = new EventEmitter<string>();
 
   constructor(
     public pubsubService: PubsubService,
@@ -141,6 +142,7 @@ export class AddGroupComponent implements OnInit {
         this.changeDetector.detectChanges();
         if (v && v.status == 200) {
           this.groupnameError = '';
+          this.setActiveChat.emit(v.group);
           this.form.reset();
         }
         this.selectedUsers = [];
@@ -176,6 +178,7 @@ export class AddGroupComponent implements OnInit {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
         this.groupnameError = '';
+        this.setActiveChat.emit(v.group);
         this.toastr.success('Success!', 'The group has been created!');
         this.closemodel();
         this.form.reset();

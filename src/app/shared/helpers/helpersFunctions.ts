@@ -50,3 +50,6 @@ export function AutoUnsubscribe(constructor) {
     };
 
 }
+export function isMobile() {
+    return window.innerWidth < 768
+}

@@ -1,7 +1,6 @@
 <div class="row dashboardContainer">
-
   <!-- popup end -->
-  <div class="col-sm-4 leftSide">
+  <div class="col-sm-4 leftSide" [hidden]="isHideThread()">
     <div class="leftSideHeader">
       <img src="./assets/images/logo2.png" class="dashboardLogo" />
     </div>
@@ -63,11 +62,11 @@
       </ng-container>
 
       <ng-container *ngIf="threadType === 'GROUP'">
-        <add-group (changeEvent)="changeSidebar($event)"></add-group>
+        <add-group (setActiveChat)="setActiveChat($event)" (changeEvent)="changeSidebar($event)"></add-group>
       </ng-container>
 
       <ng-container *ngIf="threadType === 'CHAT'">
-        <new-chat (changeEvent)="changeSidebar($event)"></new-chat>
+        <new-chat (setActiveChat)="setActiveChat($event)" (changeEvent)="changeSidebar($event)"></new-chat>
       </ng-container>
 
 
@@ -79,10 +78,13 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-8 rightSide">
-    <div class="rightSideHeader alignBottom">
-      <p class="roomNameText text-capitalize" *ngIf="activeChat.chatTitle">{{activeChat.chatTitle}}
-      </p>
+  <div class="col-sm-8 rightSide" [hidden]="isHideChatScreen()">
+    <div class="rightSideHeader alignBottom chatholder">
+      <div style="display: flex;flex-direction: row;align-items: center">
+        <img src="./assets/images/arrow-left.png" class="arrowLeft hand" (click)="backScreen()" *ngIf="isMobile()"/>
+        <p class="roomNameText text-capitalize" *ngIf="activeChat.chatTitle">{{activeChat.chatTitle}}
+        </p>
+      </div>
     </div>
 
     <!-- right side starts -->

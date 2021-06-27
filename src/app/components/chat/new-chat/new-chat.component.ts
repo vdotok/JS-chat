@@ -22,6 +22,8 @@ export class NewChatComponent implements OnInit {
   CopyAllUsers = [];
   @Output() changeEvent = new EventEmitter<string>();
   @ViewChild('searchInput') searchInput: ElementRef;
+  @Output() setActiveChat = new EventEmitter<string>();
+
 
   constructor(
     public pubsubService: PubsubService,
@@ -107,6 +109,7 @@ export class NewChatComponent implements OnInit {
         data.push(subscribedata)
         this.pubsubService.subscribeToChat(data);
         this.changeEvent.emit("THREAD");
+        this.setActiveChat.emit(v.group);
         this.loading = false;
       }
     });

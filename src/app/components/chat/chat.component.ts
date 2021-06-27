@@ -66,6 +66,7 @@ export class ChatComponent implements OnInit {
   fileToSend: File = null;
   isActiveThread = false;
   popupimagesrc = '';
+  screen = 'CHAT';
 
   constructor(
     public pubsubService: PubsubService,
@@ -277,6 +278,7 @@ export class ChatComponent implements OnInit {
     this.AllGroups.map(chat => chat.isActive = false);
     group['isActive'] = true;
     group['unReadCount'] = 0;
+    this.screen = 'MSG';
     this.scroll();
     this.readsendMessage(group.chatHistory);
     this.changeDetector.detectChanges();
@@ -522,6 +524,24 @@ export class ChatComponent implements OnInit {
   closeModal() {
     this.editGroupModel = false;
     this.changeDetector.detectChanges();
+  }
+
+  isHideThread() {
+    return this.isMobile() ? this.screen != 'CHAT' : false;
+  }
+
+  isHideChatScreen() {
+    return this.isMobile() ? this.screen != 'MSG' : false;
+  }
+
+  backScreen() {
+    this.threadType = "THREAD";
+    this.screen = "CHAT";
+    this.changeDetector.detectChanges();
+  }
+
+  isMobile() {
+    return window.innerWidth < 768
   }
 
 }
