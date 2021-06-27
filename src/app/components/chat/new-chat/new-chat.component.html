@@ -28,13 +28,13 @@
 <div class="contactListContainer max-height">
 
   <ng-container *ngFor="let user of AllUsers">
-    <div class="contactListCard">
+    <div class="contactListCard hand" (click)="startChat(user)">
       <div class="contactListCardLeft">
         <img src="./assets/images/user.png" class="ListCardIcon" />
         <p class="ListCardName text-capitalize pb-1">{{user.full_name}}</p>
       </div>
       <div class="contactListCardRight justify-content-end pl-1">
-        <img src="./assets/images/chat.png" class=" pl-1 ListCardButton hand" (click)="startChat(user)" />
+        <img src="./assets/images/chat.png" class=" pl-1 ListCardButton hand" />
       </div>
     </div>
   </ng-container>
