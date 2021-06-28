@@ -21,8 +21,8 @@
         <div class="listingContainer fullHeight">
           <div class="chatListContainer noHorizontalPadding">
             <ng-container *ngFor="let group of AllGroups">
-              <div class="chatsCardContainer hand">
-                <div class="chatsCardLeft" (click)="setActiveChat(group)">
+              <div class="chatsCardContainer hand" (click)="setActiveChat(group)">
+                <div class="chatsCardLeft" >
                   <div class="chatsNameWrap">
                     <p class="chatName text-capitalize">{{group.chatTitle}}</p>
                     <span class="unreadBadge" *ngIf="group.unReadCount"> {{group.unReadCount}}</span>

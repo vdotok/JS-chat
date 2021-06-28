@@ -68,6 +68,7 @@ export class ChatComponent implements OnInit {
   popupimagesrc = '';
   screen = 'CHAT';
   sdkconnected = false;
+  setToActive = null;
   constructor(
     public pubsubService: PubsubService,
     private svc: BaseService,
@@ -255,6 +256,11 @@ export class ChatComponent implements OnInit {
         if (!this.activeChat.chatTitle) {
           this.activeChat = this.AllGroups.length ? this.AllGroups['0'] : {};
         }
+        if (this.setToActive) {
+          const indexchat = this.AllGroups.find(group => group.id == this.setToActive)
+          this.activeChat = indexchat ? indexchat : this.AllGroups['0'];
+          this.setToActive = null;
+        }
         this.isActiveThread = true;
         this.pubsubService.subscribeToChat(this.AllGroups);
       }
@@ -292,12 +298,7 @@ export class ChatComponent implements OnInit {
   }
 
   setchat(chat) {
-    if (chat.auto_created) {
-      chat['chatTitle'] = chat['participants'][0]['ref_id'] != this.currentUserName ? chat['participants'][0]['full_name'] : chat['participants'][1]['full_name'];
-    } else {
-      chat['chatTitle'] = chat.group_title;
-    }
-    this.activeChat = chat;
+    this.setToActive = chat.id;
   }
 
   readSingleMessage(response, isActiveThread) {
