@@ -67,7 +67,7 @@ export class ChatComponent implements OnInit {
   isActiveThread = false;
   popupimagesrc = '';
   screen = 'CHAT';
-
+  sdkconnected = false;
   constructor(
     public pubsubService: PubsubService,
     private svc: BaseService,
@@ -88,9 +88,15 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.pubsubService.Client.on("connect", response => {
       console.error("connect", response);
+      this.sdkconnected = true;
       if (!this.AllGroups.length) {
         this.getAllGroups();
       }
+    });
+
+    this.pubsubService.Client.on("disconnect", (response) => {
+      console.log("disconnect", response);
+      this.sdkconnected = false;
     });
 
     document.addEventListener("keyup", event => {
@@ -104,9 +110,7 @@ export class ChatComponent implements OnInit {
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       console.log("authentication_error", res);
     });
-    this.pubsubService.Client.on("disconnect", (response) => {
-      console.log("disconnect", response);
-    });
+
 
     this.pubsubService.Client.on("offline", response => {
       console.log("offline", response);

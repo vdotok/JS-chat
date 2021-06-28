@@ -75,13 +75,14 @@
       <div class="logoutContainer" (click)="logout()">
         <img src="./assets/images/log-out.png" class="logoutLogo" />
         <span class="logoutText">LOG OUT {{currentUserData.full_name}}</span>
+        <span class="ml-1" [ngClass]="sdkconnected ? 'online' :'offline' "></span>
       </div>
     </div>
   </div>
   <div class="col-sm-8 rightSide" [hidden]="isHideChatScreen()">
     <div class="rightSideHeader alignBottom chatholder">
       <div style="display: flex;flex-direction: row;align-items: center">
-        <img src="./assets/images/arrow-left.png" class="arrowLeft hand" (click)="backScreen()" *ngIf="isMobile()"/>
+        <img src="./assets/images/arrow-left.png" class="arrowLeft hand" (click)="backScreen()" *ngIf="isMobile()" />
         <p class="roomNameText text-capitalize" *ngIf="activeChat.chatTitle">{{activeChat.chatTitle}}
         </p>
       </div>

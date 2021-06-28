@@ -16,21 +16,16 @@ export class PubsubService implements OnDestroy {
   }
 
   public initConfigure(): void {
-    console.error('calleddd ,initConfigure',this.Client);
-    if (!this.Client) {
-      console.error('initConfigure inner',this.Client);
-      this.Client = new MVDOTOK.Client({
-        projectID: "15Q89R",
-        secret: "3d9686b635b15b5bc2d19800407609fa",
-      });
-      this.Client.on("authenticated", (res) => {
-        let user = StorageService.getUserData();
-        console.log("====authenticated", user.ref_id.toString(), user.authorization_token.toString());
-        this.Client.Register(user.ref_id.toString(), user.authorization_token.toString());
+    this.Client = new MVDOTOK.Client({
+      projectID: "15Q89R",
+      secret: "3d9686b635b15b5bc2d19800407609fa",
+    });
+    this.Client.on("authenticated", (res) => {
+      let user = StorageService.getUserData();
+      console.log("====authenticated", user.ref_id.toString(), user.authorization_token.toString());
+      this.Client.Register(user.ref_id.toString(), user.authorization_token.toString());
 
-      });
-    }
-
+    });
   }
 
   public sendMessage(message): void {
