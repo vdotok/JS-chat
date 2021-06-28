@@ -141,7 +141,7 @@ export class ChatComponent implements OnInit {
         this.changeDetector.detectChanges();
       } else if (response.type == 'typing') {
         this.setUserTyping(response);
-      } else if (response.receiptType == 3 || response.receiptType == 2) {
+      } else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
         if (response.to != undefined)
           chName = response.to;
