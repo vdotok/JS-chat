@@ -100,8 +100,17 @@ export class AddGroupComponent implements OnInit {
           } else {
             this.AllUsers = res.users;
           }
+          this.setAlreadySelected();
         })
     }
+  }
+
+  setAlreadySelected() {
+    this.selectedUsers.map(user => {
+      const userIndex = this.AllUsers.find(alluser => alluser.user_id == user.user_id);
+      if (userIndex) userIndex['selected'] = true;
+    });
+    this.changeDetector.detectChanges();
   }
 
   selectContact(contact) {

@@ -62,11 +62,11 @@
       </ng-container>
 
       <ng-container *ngIf="threadType === 'GROUP'">
-        <add-group (setActiveChat)="setActiveChat($event)" (changeEvent)="changeSidebar($event)"></add-group>
+        <add-group (setActiveChat)="setchat($event)" (changeEvent)="changeSidebar($event)"></add-group>
       </ng-container>
 
       <ng-container *ngIf="threadType === 'CHAT'">
-        <new-chat (setActiveChat)="setActiveChat($event)" (changeEvent)="changeSidebar($event)"></new-chat>
+        <new-chat (setActiveChat)="setchat($event)" (changeEvent)="changeSidebar($event)"></new-chat>
       </ng-container>
 
 
@@ -118,7 +118,7 @@
 
               <span class="time">
                 <ng-container *ngIf="chat.readCount && chat.from == currentUserName">
-                  {{chat.readCount && chat.auto_created ? 'Read' :'Read'+ ' ' + chat.readCount}}
+                  'Read'
                   <br />
                 </ng-container>
                 <span> {{chat.date | date:"shortTime"}} </span>

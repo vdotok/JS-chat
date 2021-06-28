@@ -251,11 +251,16 @@ export class ChatComponent implements OnInit {
           chat['isSeen'] = true;
           return chat;
         });
-        this.activeChat = this.AllGroups.length ? this.AllGroups['0'] : {};
+        console.error("this.activeChat.chatTitle", this.activeChat);
+        if (!this.activeChat.chatTitle) {
+          this.activeChat = this.AllGroups.length ? this.AllGroups['0'] : {};
+        }
         this.isActiveThread = true;
         this.pubsubService.subscribeToChat(this.AllGroups);
       }
-
+      setTimeout(() => {
+        this.sortThread();
+      }, 500);
       this.changeDetector.detectChanges();
     });
   }
@@ -278,16 +283,22 @@ export class ChatComponent implements OnInit {
     this.isActiveThread = group.id == this.activeChat.id;
     if (!this.isActiveThread) this.message = '';
     this.activeChat = group;
-    this.activeChat['isActive'] = true;
-    this.AllGroups.map(chat => chat.isActive = false);
-    group['isActive'] = true;
     group['unReadCount'] = 0;
     this.screen = 'MSG';
     this.scroll();
+    group.chatHistory = group.chatHistory || [];
     this.readsendMessage(group.chatHistory);
     this.changeDetector.detectChanges();
   }
 
+  setchat(chat) {
+    if (chat.auto_created) {
+      chat['chatTitle'] = chat['participants'][0]['ref_id'] != this.currentUserName ? chat['participants'][0]['full_name'] : chat['participants'][1]['full_name'];
+    } else {
+      chat['chatTitle'] = chat.group_title;
+    }
+    this.activeChat = chat;
+  }
 
   readSingleMessage(response, isActiveThread) {
     if (response.from == this.currentUserName || !isActiveThread) return;
@@ -343,7 +354,9 @@ export class ChatComponent implements OnInit {
   }
 
   sendTextMessage() {
-    if (this.message.length > 400) {
+    if (!(/\S/.test(this.message))) {
+      return;
+    } else if (this.message.length > 400) {
       this.toastr.error("Message can not be more than 400 characters", "Opps!")
       return;
     } else if (this.fileToSend && this.invalidSize()) {
@@ -472,9 +485,11 @@ export class ChatComponent implements OnInit {
   }
 
   sortThread() {
-    this.AllGroups.sort((a, b) => {
-      return a.id == this.activeChat.id ? -1 : 1;
-    });
+    if (this.activeChat.id) {
+      this.AllGroups.sort((a, b) => {
+        return a.id == this.activeChat.id ? -1 : 1;
+      });
+    }
   }
 
   messageBy(chatthread, response) {
