@@ -12,38 +12,7 @@ import { PubsubService } from 'src/app/shared/services/pubsub.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import FormsHandler from 'src/app/shared/FormsHandler/FormsHandler';
-
-export interface MessageModel {
-  id: String,
-  to: String,
-  key: String,
-  from: String,
-  type: String,
-  content: String,
-  size: number,
-  isGroupMessage: Boolean,
-  status: number,
-  date: number,
-}
-
-export interface receiptModel {
-  receiptType: number,
-  key: String,
-  messageId: String,
-  date: number,
-  from: String,
-  to: String,
-}
-
-export interface fileModel {
-  id: String,
-  from: String,
-  topic: String,
-  key: String,
-  type: String,
-  date: number
-}
-
+import { MessageModel, onlineOfflineModel, receiptModel, typingModel } from 'src/app/shared/models/chat';
 
 @Component({
   selector: 'chat',
@@ -118,7 +87,7 @@ export class ChatComponent implements OnInit {
       this.setOfflineStatus(response);
     });
 
-    this.pubsubService.Client.on("online", response => {
+    this.pubsubService.Client.on("online", (response: onlineOfflineModel) => {
       console.log("online", response);
       this.setOnlineStatus(response);
     });
@@ -355,7 +324,7 @@ export class ChatComponent implements OnInit {
   }
 
   sendTextMessage() {
-    if (!(/\S/.test(this.message))) {
+    if ((!(/\S/.test(this.message))) && !this.fileToSend) {
       return;
     } else if (this.message.length > 400) {
       this.toastr.error("Message can not be more than 400 characters", "Opps!")
@@ -421,7 +390,7 @@ export class ChatComponent implements OnInit {
     this.pubsubService.sendMessage(sendMessage);
   }
 
-  setOnlineStatusforSubscribe(response) {
+  setOnlineStatusforSubscribe(response: onlineOfflineModel) {
     const indexchat = this.findChatThread(response.channel);
     if (indexchat) {
       let onlineNumbers = [...new Set(response.who.map(n => n.username))]
@@ -431,7 +400,7 @@ export class ChatComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
 
-  setOnlineStatus(response) {
+  setOnlineStatus(response: onlineOfflineModel) {
     let indexchat = this.findChatThread(response.channel);
     if (!indexchat) return;
     if (indexchat.auto_created) indexchat['Online'] = true;
@@ -441,7 +410,7 @@ export class ChatComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
 
-  setOfflineStatus(response) {
+  setOfflineStatus(response: onlineOfflineModel) {
     const indexchat = this.findChatThread(response.channel);
     if (indexchat && indexchat.auto_created) indexchat['Online'] = false;
     if (!indexchat.auto_created) {
@@ -450,7 +419,7 @@ export class ChatComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
 
-  setUserTyping(response) {
+  setUserTyping(response: typingModel) {
     let indexchat = FindArrayObject(this.AllGroups, 'channel_name', response.to);
     if (indexchat) {
       let typinguser = indexchat["participants"].filter(e => e.ref_id == response.from);

@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StorageService } from './storage.service';
-declare const PUBSUB: any;
 declare const MVDOTOK: any;
+
 @Injectable()
 export class PubsubService implements OnDestroy {
   @Output()
