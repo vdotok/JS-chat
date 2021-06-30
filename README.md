@@ -33,7 +33,7 @@ Follow the link below register your self for chat server and get the project Id
 
 Clone this repo into new project folder (e.g., `my-proj`).
 ```shell
-git clone https://github.com/vdotok/JS-one2one.git  my-proj
+git clone https://github.com/vdotok/JS-chat.git 
 cd my-proj
 
 ```
@@ -166,7 +166,7 @@ This method is used to send message of following types:
 
 ```
 Client.SendMessage({
-    "from": "kashif11",
+    "from": "userId",
     "content": "This is a text message",
     "id": "1611641364417",
     "size": 0,
@@ -185,7 +185,7 @@ This method is used to send a confirmation message of a message that is received
 Client.SendReceipt({ 
     //This id will be the same as received message id           
     "messageId": "1611641364415",
-    "from": "kashif11",
+    "from": "userId",
     "key": "AACO5B_L67HeJxw7onqZz1QoYDd2KyJQ",
     "to": "4130/",
     "receiptType": 3,
