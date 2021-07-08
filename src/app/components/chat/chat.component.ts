@@ -108,6 +108,11 @@ export class ChatComponent implements OnInit {
         chatthread['type'] = response.type;
         this.pushMessage(chatthread, response);
         this.readSingleMessage(response, isActiveThread);
+        setTimeout(() => {
+          this.AllGroups.sort((a, b) => {
+            return a.id == chatthread.id ? -1 : 1;
+          });
+        }, 500);
         this.changeDetector.detectChanges();
       } else if (response.type == 'typing') {
         this.setUserTyping(response);
@@ -318,8 +323,8 @@ export class ChatComponent implements OnInit {
     let type = "file";
     const filetype = fileR.type;
     if (filetype.includes('image')) type = "image";
-    if (filetype.includes('audio')) type = "audio";
-    if (filetype.includes('video')) type = "video";
+    else if (filetype.includes('audio')) type = "audio";
+    else if (filetype.includes('video')) type = "video";
     return type;
   }
 
@@ -420,12 +425,38 @@ export class ChatComponent implements OnInit {
   }
 
   setUserTyping(response: typingModel) {
+    if (response.from == this.currentUserData.ref_id) return;
     let indexchat = FindArrayObject(this.AllGroups, 'channel_name', response.to);
-    if (indexchat) {
-      let typinguser = indexchat["participants"].filter(e => e.ref_id == response.from);
-      let sender = (typinguser.length > 0) ? typinguser[0].username : "";
-      indexchat['userTyping'] = response.content != '0' && response.from != this.currentUserData.ref_id;
-      indexchat['userTypingContent'] = (response.content == '1') ? sender + " is typing..." : "";
+    let typinguser = indexchat["participants"].find(e => e.ref_id == response.from);
+    if (response.content == '1') {
+      indexchat['TypingUserList'] = (indexchat['TypingUserList'] || []);
+      indexchat['TypingUserList'] = [...new Set([typinguser])];
+    } else if (response.content == '0') {
+      indexchat['TypingUserList'] = indexchat['TypingUserList'].filter(e => e.ref_id != response.from);
+    }
+    indexchat['userTyping'] = indexchat['TypingUserList'].length && response.content != '0';
+    let nameList = indexchat['TypingUserList'].map(userObj => userObj.full_name);
+    if (nameList.length == 1) {
+      indexchat['userTypingContent'] = nameList + ' ' + 'is typing...';
+    } else if (nameList.length == 2) {
+      indexchat['userTypingContent'] = nameList.join() + ' ' + 'are typing...';
+    } else if (nameList.length > 2) {
+      indexchat['userTypingContent'] = nameList.filter((i, j) => j < 2).join() + ' ' + 'and other are typing...';
+    }
+    // if (indexchat && indexchat.auto_created) {
+    //   indexchat['userTyping'] = response.content != '0' && response.from != this.currentUserData.ref_id;
+    //   indexchat['userTypingContent'] = (response.content == '1') ? sender + " is typing..." : "";
+    // } else if (indexchat && !indexchat.auto_created) {
+    //   this.setMultiUserTyping(response, typinguser, indexchat);
+    // }
+    this.changeDetector.detectChanges();
+  }
+
+  setMultiUserTyping(response, typinguser, indexchat) {
+    if (response.content == '1') {
+      indexchat['TypingUserList'] = [...new Set(typinguser)];
+    } else if (response.content == '0') {
+      indexchat['TypingUserList'] = indexchat['TypingUserList'].filter(e => e.ref_id != response.from);
     }
     this.changeDetector.detectChanges();
   }
@@ -463,7 +494,6 @@ export class ChatComponent implements OnInit {
   }
 
   messageBy(chatthread, response) {
-    console.error("messageBy isShowName", this.isShowName(chatthread, response));
     if (this.isShowName(chatthread, response)) {
       const messageByObj = FindArrayObject(chatthread.participants, 'ref_id', response.from);
       response['messageBy'] = messageByObj && messageByObj.full_name || '';
