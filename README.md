@@ -27,7 +27,7 @@ We recommend [nvm](https://github.com/creationix/nvm) for managing multiple vers
 
 y	
 Follow the link below register your self for chat server and get the project Id
-	https://www.kuchtohoga.com/norgic/chatSDK/
+	https://userpanel.vdotok.com/norgic/chatSDK
   
 ## How to run it locally
 
