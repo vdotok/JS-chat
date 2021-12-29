@@ -2005,7 +2005,7 @@ class LoginComponent {
         if (this.loginForm.invalid)
             return;
         const saveData = this.loginForm.value;
-        saveData.project_id = '125YLEY1';
+        saveData.project_id = '170JRJUI';
         this.loading = true;
         this.formError = null;
         this.auth.login(saveData).subscribe(v => {
@@ -2145,7 +2145,7 @@ class SignUpComponent {
         if (this.loginForm.invalid)
             return;
         const saveData = this.loginForm.value;
-        saveData.project_id = '125YLEY1';
+        saveData.project_id = '170JRJUI';
         this.loading = true;
         this.formError = null;
         this.auth.signup(saveData).subscribe(v => {
@@ -3051,7 +3051,7 @@ class PubsubService {
     initConfigure() {
         let user = _storage_service__WEBPACK_IMPORTED_MODULE_1__["StorageService"].getUserData();
         this.Client = new MVDOTOK.Client({
-            projectID: "125YLEY1",
+            projectID: "170JRJUI",
             secret: "3d9686b635b15b5bc2d19800407609fa",
             host: `${user.messaging_server_map.protocol}://${user.messaging_server_map.host}:${user.messaging_server_map.port}`
         });
@@ -3609,7 +3609,7 @@ __webpack_require__.r(__webpack_exports__);
 // The list of file replacements can be found in `angular.json`.
 const environment = {
     production: false,
-    apiBaseUrl: 'https://stenant.vdotok.dev/API/v0/'
+    apiBaseUrl: 'https://tenant-api.vdotok.dev/API/v0/'
 };
 /*
  * For easier debugging in development mode, you can import the following file
