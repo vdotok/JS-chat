@@ -3806,7 +3806,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.loginForm.invalid) return;
           var saveData = this.loginForm.value;
-          saveData.project_id = '170JRJUI';
+          saveData.project_id = '176GK5IN';
           this.loading = true;
           this.formError = null;
           this.auth.login(saveData).subscribe(function (v) {
@@ -4085,7 +4085,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.loginForm.invalid) return;
           var saveData = this.loginForm.value;
-          saveData.project_id = '170JRJUI';
+          saveData.project_id = '176GK5IN';
           this.loading = true;
           this.formError = null;
           this.auth.signup(saveData).subscribe(function (v) {
@@ -5629,7 +5629,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var user = _storage_service__WEBPACK_IMPORTED_MODULE_1__["StorageService"].getUserData();
 
           this.Client = new MVDOTOK.Client({
-            projectID: "170JRJUI",
+            projectID: "176GK5IN",
             secret: "3d9686b635b15b5bc2d19800407609fa",
             host: "".concat(user.messaging_server_map.protocol, "://").concat(user.messaging_server_map.host, ":").concat(user.messaging_server_map.port)
           });

@@ -2005,7 +2005,7 @@ class LoginComponent {
         if (this.loginForm.invalid)
             return;
         const saveData = this.loginForm.value;
-        saveData.project_id = '170JRJUI';
+        saveData.project_id = '176GK5IN';
         this.loading = true;
         this.formError = null;
         this.auth.login(saveData).subscribe(v => {
@@ -2145,7 +2145,7 @@ class SignUpComponent {
         if (this.loginForm.invalid)
             return;
         const saveData = this.loginForm.value;
-        saveData.project_id = '170JRJUI';
+        saveData.project_id = '176GK5IN';
         this.loading = true;
         this.formError = null;
         this.auth.signup(saveData).subscribe(v => {
@@ -3051,7 +3051,7 @@ class PubsubService {
     initConfigure() {
         let user = _storage_service__WEBPACK_IMPORTED_MODULE_1__["StorageService"].getUserData();
         this.Client = new MVDOTOK.Client({
-            projectID: "170JRJUI",
+            projectID: "176GK5IN",
             secret: "3d9686b635b15b5bc2d19800407609fa",
             host: `${user.messaging_server_map.protocol}://${user.messaging_server_map.host}:${user.messaging_server_map.port}`
         });
