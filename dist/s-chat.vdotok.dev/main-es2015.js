@@ -3051,7 +3051,7 @@ class PubsubService {
     initConfigure() {
         let user = _storage_service__WEBPACK_IMPORTED_MODULE_1__["StorageService"].getUserData();
         this.Client = new MVDOTOK.Client({
-            projectID: "176GK5IN",
+            projectID: "18522FRZ",
             secret: "3d9686b635b15b5bc2d19800407609fa",
             host: `${user.messaging_server_map.protocol}://${user.messaging_server_map.host}:${user.messaging_server_map.port}`
         });
