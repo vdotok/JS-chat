@@ -1,5 +1,5 @@
 # Vdotok QuickStart Source for chat messaging Demo
-This is a demo project to demonstrate using chat  with Angular 9+.
+update.
 
 ## Live Demo
  Fellow the link below to visit the live demo
