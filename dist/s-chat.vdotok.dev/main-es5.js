@@ -3806,7 +3806,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.loginForm.invalid) return;
           var saveData = this.loginForm.value;
-          saveData.project_id = '143LV8M8';
+          saveData.project_id = '123DGDVB';
           this.loading = true;
           this.formError = null;
           this.auth.login(saveData).subscribe(function (v) {
@@ -4085,7 +4085,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.loginForm.invalid) return;
           var saveData = this.loginForm.value;
-          saveData.project_id = '143LV8M8';
+          saveData.project_id = '123DGDVB';
           this.loading = true;
           this.formError = null;
           this.auth.signup(saveData).subscribe(function (v) {
@@ -5629,8 +5629,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var user = _storage_service__WEBPACK_IMPORTED_MODULE_1__["StorageService"].getUserData();
 
           this.Client = new MVDOTOK.Client({
-            projectID: "143LV8M8",
-            secret: "3d9686b635b15b5bc2d19800407609fa",
+            projectID: "123DGDVB",
+            secret: "462a4b478d515fd35eae075eea059d89",
             host: "".concat(user.messaging_server_map.protocol, "://").concat(user.messaging_server_map.host, ":").concat(user.messaging_server_map.port)
           });
           this.Client.Register(user.ref_id.toString(), user.authorization_token.toString());
@@ -6516,7 +6516,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     var environment = {
       production: false,
-      apiBaseUrl: 'https://q-tenant.vdotok.dev/API/v0/'
+      apiBaseUrl: 'https://tenant.vdotok.com/API/v0/'
     };
     /*
      * For easier debugging in development mode, you can import the following file
