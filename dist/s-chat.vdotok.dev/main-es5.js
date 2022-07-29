@@ -6516,7 +6516,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     var environment = {
       production: false,
-      apiBaseUrl: 'https://tenant.vdotok.com/API/v0/'
+      apiBaseUrl: 'https://s-tenant.vdotok.dev/API/v0/'
     };
     /*
      * For easier debugging in development mode, you can import the following file
