@@ -18,7 +18,7 @@ export class PubsubService implements OnDestroy {
   public initConfigure(): void {
     let user = StorageService.getUserData();
     this.Client = new MVDOTOK.Client({
-      projectID: "123DGDVB",
+      projectID: "180UJ6W2",
       secret: "462a4b478d515fd35eae075eea059d89",
       host: `${user.messaging_server_map.protocol}://${user.messaging_server_map.host}:${user.messaging_server_map.port}`
     });
