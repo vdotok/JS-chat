@@ -94,7 +94,7 @@ export class ChatComponent implements OnInit {
 
     this.pubsubService.Client.on("message", response => {
       response = JSON.parse(JSON.stringify(response));
-      console.trace("new message", response);
+      //console.trace("new message", response);
       if (response.type == 'text' || response.type == 'file' || response.type == 'image' || response.type == 'audio' || response.type == 'video') {
         this.scroll();
         const chatthread = this.findChatThread(response.to);
@@ -226,7 +226,7 @@ export class ChatComponent implements OnInit {
           chat['isSeen'] = true;
           return chat;
         });
-        console.error("this.activeChat.chatTitle", this.activeChat);
+        console.log("this.activeChat.chatTitle", this.activeChat);
         if (!this.activeChat.chatTitle) {
           this.activeChat = this.AllGroups.length ? this.AllGroups['0'] : {};
         }
