@@ -27,7 +27,7 @@ export class ChatComponent implements OnInit {
   activeChat: any = {
     chatHistory: []
   };
-  message: string = '';
+  message = '';
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
   @ViewChild('messageInputElement') messageInputElement: ElementRef;
@@ -121,7 +121,7 @@ export class ChatComponent implements OnInit {
         if (response.to != undefined)
           chName = response.to;
         const chatthread = this.findChatThread(chName);
-        let message = FindArrayObject(chatthread.chatHistory, 'id', response.messageId);
+        const message = FindArrayObject(chatthread.chatHistory, 'id', response.messageId);
         if (message) {
           message['readCount'] = (message['readCount'] || 0) + 1
         }
@@ -342,7 +342,7 @@ export class ChatComponent implements OnInit {
     this.scroll();
     if (!this.message && !this.fileToSend) return;
     if (this.fileToSend) {
-      var option = {
+      const option = {
         id: new Date().getTime().toString(),
         from: StorageService.getAuthUsername(),
         topic: this.activeChat.channel_name,
@@ -398,7 +398,7 @@ export class ChatComponent implements OnInit {
   setOnlineStatusforSubscribe(response: onlineOfflineModel) {
     const indexchat = this.findChatThread(response.channel);
     if (indexchat) {
-      let onlineNumbers = [...new Set(response.who.map(n => n.username))]
+      const onlineNumbers = [...new Set(response.who.map(n => n.username))]
       indexchat['onlineParticipants'] = onlineNumbers && onlineNumbers.length || 1;
       if (indexchat && indexchat.auto_created) indexchat['Online'] = onlineNumbers.length > 1
     }
@@ -406,7 +406,7 @@ export class ChatComponent implements OnInit {
   }
 
   setOnlineStatus(response: onlineOfflineModel) {
-    let indexchat = this.findChatThread(response.channel);
+    const indexchat = this.findChatThread(response.channel);
     if (!indexchat) return;
     if (indexchat.auto_created) indexchat['Online'] = true;
     if (!indexchat.auto_created) {
@@ -426,8 +426,8 @@ export class ChatComponent implements OnInit {
 
   setUserTyping(response: typingModel) {
     if (response.from == this.currentUserData.ref_id) return;
-    let indexchat = FindArrayObject(this.AllGroups, 'channel_name', response.to);
-    let typinguser = indexchat["participants"].find(e => e.ref_id == response.from);
+    const indexchat = FindArrayObject(this.AllGroups, 'channel_name', response.to);
+    const typinguser = indexchat["participants"].find(e => e.ref_id == response.from);
     if (response.content == '1') {
       indexchat['TypingUserList'] = (indexchat['TypingUserList'] || []);
       indexchat['TypingUserList'] = [...new Set([typinguser])];
@@ -435,7 +435,7 @@ export class ChatComponent implements OnInit {
       indexchat['TypingUserList'] = indexchat['TypingUserList'].filter(e => e.ref_id != response.from);
     }
     indexchat['userTyping'] = indexchat['TypingUserList'].length && response.content != '0';
-    let nameList = indexchat['TypingUserList'].map(userObj => userObj.full_name);
+    const nameList = indexchat['TypingUserList'].map(userObj => userObj.full_name);
     if (nameList.length == 1) {
       indexchat['userTypingContent'] = nameList + ' ' + 'is typing...';
     } else if (nameList.length == 2) {
@@ -515,7 +515,7 @@ export class ChatComponent implements OnInit {
     if (response.type == 'text' || !response.content) {
       thread['chatHistory'].push(newResponse);
     } else {
-      var foundIndex = thread.chatHistory.findIndex(x => x.id == response.id);
+      const foundIndex = thread.chatHistory.findIndex(x => x.id == response.id);
       thread.chatHistory[foundIndex] = response;
     }
   }

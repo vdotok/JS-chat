@@ -54,7 +54,7 @@ export class HttpService implements HttpInterceptor {
                     return throwError(errorRes);
                 })
             );
-    };
+    }
 
     getModifiedReq(req: HttpRequest<any>): HttpRequest<any> {
         req = req.clone({ url: this.baseUrl + req.url });

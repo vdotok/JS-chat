@@ -64,7 +64,7 @@ export class NewChatComponent implements OnInit {
             }
             const temparaay = [...this.CopyAllUsers];
             const filteruser = temparaay.filter(user => {
-              let searchValue = value.toLowerCase();
+              const searchValue = value.toLowerCase();
               if (user.full_name.toLowerCase().startsWith(searchValue)) { return -1; }
             });
             const returnData = {
@@ -97,19 +97,19 @@ export class NewChatComponent implements OnInit {
   startChat(user) {
     if (this.loading) return;
     this.loading = true;
-    let data = {
+    const data = {
       group_title: user.full_name,
       participants: [user.user_id],
       auto_created: 1
     }
     this.svc.post('CreateGroup', data).subscribe(v => {
       if (v && v.status == 200) {
-        let subscribedata = {
+        const subscribedata = {
           ...v.group,
           key: v.group['channel_key'],
           channel: v.group['channel_name'],
         };
-        let data = [];
+        const data = [];
         data.push(subscribedata)
         this.pubsubService.subscribeToChat(data);
         this.changeEvent.emit("THREAD");

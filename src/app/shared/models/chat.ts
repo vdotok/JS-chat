@@ -1,51 +1,51 @@
 export interface MessageModel {
-    id: String,
-    to: String,
-    key: String,
-    from: String,
-    type: String,
-    content: String,
+    id: string,
+    to: string,
+    key: string,
+    from: string,
+    type: string,
+    content: string,
     size: number,
-    isGroupMessage: Boolean,
+    isGroupMessage: boolean,
     status: number,
     date: number,
 }
 
 export interface receiptModel {
     receiptType: number,
-    key: String,
-    messageId: String,
+    key: string,
+    messageId: string,
     date: number,
-    from: String,
-    to: String,
+    from: string,
+    to: string,
 }
 
 export interface fileModel {
-    id: String,
-    from: String,
-    topic: String,
-    key: String,
-    type: String,
+    id: string,
+    from: string,
+    topic: string,
+    key: string,
+    type: string,
     date: number
 }
 
 export interface onlineOfflineModel {
-    channel: String,
-    event: String,
+    channel: string,
+    event: string,
     time: number,
     who: any
 }
 
 export interface typingModel {
-    content: String
+    content: string
     date: number
-    from: String,
-    id: String,
+    from: string,
+    id: string,
     isGroupMessage: false
-    key: String,
+    key: string,
     size: 0
     status: 0
-    to: String,
+    to: string,
     type: "typing"
 }
 

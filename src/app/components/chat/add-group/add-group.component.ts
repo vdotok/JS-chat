@@ -29,7 +29,7 @@ export class AddGroupComponent implements OnInit {
   activeChat: any = {
     chatHistory: []
   };
-  message: string = '';
+  message = '';
   group_title = '';
   groupnameError = '';
   dialogRef;
@@ -87,7 +87,7 @@ export class AddGroupComponent implements OnInit {
             }
             const temparaay = [...this.CopyAllUsers];
             const filteruser = temparaay.filter(user => {
-              let searchValue = value.toLowerCase();
+              const searchValue = value.toLowerCase();
               if (user.full_name.toLowerCase().startsWith(searchValue)) { return -1; }
             });
             const returnData = {
@@ -146,7 +146,7 @@ export class AddGroupComponent implements OnInit {
     }
     if (this.selectedUsers.length == 1) {
       const useridArray = this.selectedUsers.map(user => user.user_id);
-      let data = {
+      const data = {
         participants: useridArray,
         auto_created: useridArray.length > 1 ? 0 : 1,
         group_title: "One to One chat",

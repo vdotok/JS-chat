@@ -98,17 +98,17 @@
             <!-- first messgae from same person -->
             <div class="bubbleContainer">
 
-              <div class="bubble" *ngIf="chat.type =='text'">
+              <div class="bubble" *ngIf="chat.type ==='text'">
                 <p class="msgText">{{chat.content}}</p>
               </div>
 
-              <div class="imgbubble" *ngIf="chat.type =='image'">
+              <div class="imgbubble" *ngIf="chat.type ==='image'">
                 <mat-spinner [diameter]="30" *ngIf="!chat.content"></mat-spinner>
                 <img [src]="chat.content | safeUrl" class="w-100 msgImage img-thumbnail img-fluid"
                   (click)="openImage(chat.content)" />
               </div>
 
-              <div class="imgbubble file-attachment" *ngIf="chat.type !='text' && chat.type !='image'">
+              <div class="imgbubble file-attachment" *ngIf="chat.type !=='text' && chat.type !=='image'">
                 <mat-spinner [diameter]="30" *ngIf="!chat.content"></mat-spinner>
                 <ng-container *ngIf="chat.content">
                   <img [src]="checkFileType(chat.content)" class="w-100 msgImage thumbnail img-fluid" />

@@ -13,8 +13,8 @@ import { AuthService } from '../../shared/auth/auth.service';
 export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: FormGroup;
-  loading: boolean = false;
-  formError: string = '';
+  loading = false;
+  formError = '';
 
   constructor(
     private router: Router,

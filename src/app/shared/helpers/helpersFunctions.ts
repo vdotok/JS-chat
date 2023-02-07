@@ -1,6 +1,6 @@
 
 export function isEmptyObj(obj) {
-    for (var key in obj) {
+    for (const key in obj) {
         if (obj.hasOwnProperty(key))
             return false;
     }
@@ -46,7 +46,7 @@ export function AutoUnsubscribe(constructor) {
 
         if (original && typeof original === 'function') {
             original.apply(this, arguments)
-        };
+        }
     };
 
 }
