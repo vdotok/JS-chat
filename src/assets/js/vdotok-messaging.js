@@ -1,15 +1,6 @@
 /*! ========= vdotok-messaging==================== */
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["MVDOTOK"] = factory();
-	else
-		root["MVDOTOK"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
+window["MVDOTOK"] =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -105,7 +96,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "version", function() { return version; });
 /* harmony import */ var _version__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _Client_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return _Client_index__WEBPACK_IMPORTED_MODULE_1__["Client"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return _Client_index__WEBPACK_IMPORTED_MODULE_1__["default"]; });
 
 // Helpful name and version exports
 
@@ -124,7 +115,7 @@ const name = "vdotok-messaging";
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LIBRARY_VERSION", function() { return LIBRARY_VERSION; });
-const LIBRARY_VERSION = "0.0.1";
+const LIBRARY_VERSION = "0.18.1";
 
 
 /***/ }),
@@ -133,7 +124,7 @@ const LIBRARY_VERSION = "0.0.1";
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return Client; });
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Client; });
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Services_FileMessage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
@@ -155,7 +146,7 @@ global.Buffer = global.Buffer || __webpack_require__(17).Buffer;
 // eslint-disable-next-line @typescript-eslint/no-var-requires,tree-shaking/no-side-effects-in-initialization
 const mqtt = __webpack_require__(21);
 const connect = mqtt.connect;
-/* Norgics SMS Service
+/* VDOTOK Messaging Service
  * @class NCS
  */
 const FileTypes = {
@@ -172,15 +163,15 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
      */
     constructor(options) {
         super();
-        this.Host = '';
-        this.Port = '';
-        this.Username = '';
-        this.Password = '';
-        this.Connection = '';
-        this.ChennalKey = '';
-        this.reConnectivity = '';
-        this.projectID = '';
-        this.projectSecretKey = '';
+        this.Host = "";
+        this.Port = "";
+        this.Username = "";
+        this.Password = "";
+        this.Connection = "";
+        this.ChennalKey = "";
+        this.reConnectivity = "";
+        this.projectID = "";
+        this.projectSecretKey = "";
         /**
          *
          * @property @private
@@ -224,18 +215,22 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
         //wss://vte2.vdotok.com:443
         const client = connect(hostString, { username: username, password: password });
         this.Connection = client;
+        client._checkPing();
         /***
          * Set CallBacks
          */
-        client.on('message', (topic, message, packet) => {
+        client.on("message", (topic, message, packet) => {
             //console.log('on MessagePacket', packet, "====Received-====message", message.toString());
             //{"time":1604670380,"event":"status","channel":"3927/","who":[{"id":"FJDE5NXLZ2SDWL7PXSQYUHXUHM"}]}
             try {
-                let JsonPacket = JSON.parse(message.toString());
-                if (JsonPacket.hasOwnProperty("event")) {
+                const JsonPacket = JSON.parse(message.toString());
+                if (topic === "emitter/notification/") {
+                    this.emit("notification", JsonPacket);
+                }
+                if (Object.prototype.hasOwnProperty.call(JsonPacket, "event")) {
                     this.SetPresenceEvent(JsonPacket);
                 }
-                else if (JsonPacket.hasOwnProperty("status") && JsonPacket["status"] == 200) {
+                else if (Object.prototype.hasOwnProperty.call(JsonPacket, "status") && JsonPacket["status"] == 200) {
                     //console.log('on Createion',JsonPacket);
                     this.emit("create", JsonPacket);
                 }
@@ -251,37 +246,52 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
                 //console.log('on MessagePacket', topic, "====Receivedasdsa", message.toString());
             }
         });
-        client.on('connect', () => {
+        client.on("connect", () => {
             this.emit("connect");
         });
-        client.on('packetsend', (data) => {
-            Client.consoleLog('on packetsend', data, (new Date()).toLocaleString());
+        client.on("packetsend", (data) => {
+            Client.consoleLog("on packetsend", data, new Date().toLocaleString());
         });
-        client.on('packetreceive', (data) => {
+        client.on("packetreceive", (data) => {
             //Client.consoleLog('on packetreceive',data);
         });
-        client.on('presence', (data) => {
+        client.on("presence", (data) => {
             // Client.consoleLog('on presence',data);
         });
-        client.on('disconnect', (data) => {
-            this.emit("disconnect", data);
+        client.on("disconnect", (data) => {
+            //this.emit("disconnect", data);
+            this.Disconnect();
         });
-        client.on('error', (data) => {
+        client.on("error", (data) => {
             this.emit("error", data);
         });
         /**********************end callbacks************************************* */
     }
     CreateChannel(channel) {
         const channelOptions = {
-            "key": "cWV91camkwd99XO9rvHmamvXxGdyeHK5",
-            "channel": channel + "/",
-            "type": "rwslp",
-            "ttl": 999999
+            key: "cWV91camkwd99XO9rvHmamvXxGdyeHK5",
+            channel: channel + "/",
+            type: "rwslp",
+            ttl: 999999
         };
         this.Connection.publish("emitter/keygen/", JSON.stringify(channelOptions));
     }
+    SendNotification(options) {
+        const groupInfo = {
+            from: options.from,
+            to: options.to,
+            data: {
+                action: options.action,
+                groupModel: options.groupModel
+            }
+        };
+        this.Connection.publish("emitter/notification/", JSON.stringify(groupInfo));
+    }
     Subscribe(options) {
-        const ChannelString = `${options.key}/${options.channel}`;
+        let ChannelString = `${options.key}/${options.channel}`;
+        if (options && options.last) {
+            ChannelString += `?last=${options.last}`;
+        }
         this.Connection.subscribe(ChannelString, [], (err, granted) => {
             //Client.consoleLog("===Subscrib===",err,granted);
             if (granted && granted != undefined) {
@@ -299,7 +309,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
         });
     }
     Presence(options) {
-        // this.Connection.unsubscribe(); 
+        // this.Connection.unsubscribe();
         //   this.Connection.presence({
         //     key: options.key,
         //     channel: options.channel,
@@ -318,15 +328,18 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
      * Send Message contains options param containing key,channel and message
      */
     SendMessage(options) {
-        const newChannelString = `${options.key}/${options.to}`;
+        let newChannelString = `${options.key}/${options.to}`;
         //Client.consoleLog("====SendM String===",newChannelString);
+        if (options && options.ttl) {
+            newChannelString += `?ttl=${options.ttl}`;
+        }
         this.Connection.publish(newChannelString, JSON.stringify(options), {}, () => {
-            this.Connection.on('message', (topic, message, packet) => {
+            this.Connection.on("message", (topic, message, packet) => {
                 if (topic == options.to) {
                     const payload = packet.payload;
                     const cmd = packet.cmd;
                     if (cmd == "publish" && payload != null && payload == JSON.stringify(options)) {
-                        // Client.consoleLog("===ReceivedMessage",message.toString());     
+                        // Client.consoleLog("===ReceivedMessage",message.toString());
                         this.emit("messagesent", { channel: topic, message: message });
                     }
                 }
@@ -338,12 +351,12 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
         const newChannelString = `${options.key}/${options.to}`;
         //Client.consoleLog("====SendM String===",newChannelString);
         this.Connection.publish(newChannelString, JSON.stringify(options), {}, () => {
-            this.Connection.on('message', (topic, message, packet) => {
+            this.Connection.on("message", (topic, message, packet) => {
                 if (topic == options.to) {
                     const payload = packet.payload;
                     const cmd = packet.cmd;
                     if (cmd == "publish" && payload != null && payload == JSON.stringify(options)) {
-                        //  Client.consoleLog("===ReceivedMessage",message.toString());     
+                        //  Client.consoleLog("===ReceivedMessage",message.toString());
                         this.emit("messagesent", { channel: topic, message: message });
                     }
                 }
@@ -358,7 +371,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
     SendRawMessage(message, options) {
         const newChannelString = `${options.key}/${options.to}`;
         this.Connection.publish(newChannelString, message, {}, () => {
-            this.Connection.on('message', (topic, message, packet) => {
+            this.Connection.on("message", (topic, message, packet) => {
                 if (topic == options.topic) {
                     const payload = packet.payload;
                     const cmd = packet.cmd;
@@ -379,7 +392,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
         //       let payload=packet.payload;
         //               let cmd=packet.cmd;
         //               if(cmd=="publish" && payload!=null && payload==JSON.stringify(options)){
-        //               //  Client.consoleLog("===ReceivedMessage",message.toString());     
+        //               //  Client.consoleLog("===ReceivedMessage",message.toString());
         //                 this.emit("messagesent",{channel:topic,message:message});
         //               }
         //     }
@@ -393,8 +406,9 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
      */
     Disconnect() {
         if (this.pingWorker) {
-            this.pingWorker.postMessage({ method: 'clearPingInterval' });
+            this.pingWorker.postMessage({ method: "clearPingInterval" });
         }
+        this.emit("disconnect", { message: "SDK Disconnected" });
         this.Connection.end();
     }
     /***
@@ -412,7 +426,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
         message["isBuffering"] = false;
         message["ext"] = files.Header.fileExtension;
         message.id = packet.headerId;
-        message["filename"] = this.Username + Math.random() + '.' + files.Header.fileExtension.toLowerCase();
+        message["filename"] = this.Username + Math.random() + "." + files.Header.fileExtension.toLowerCase();
         // message.content=await BufferToBase64Async(files.Content,files.Header.fileExtension);
         message.content = await Object(_Helpers_FileHelper__WEBPACK_IMPORTED_MODULE_4__["ArrayBase64ToStringBase64Async"])(files.Content, files.Header.fileExtension);
         message.type = FileTypes[message.type];
@@ -432,7 +446,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
      * @private method for emitting file message
      */
     SetFileLoadingMessage(packet) {
-        let message = new _Modals_MessageModel__WEBPACK_IMPORTED_MODULE_3__["default"]();
+        const message = new _Modals_MessageModel__WEBPACK_IMPORTED_MODULE_3__["default"]();
         message.content = "";
         message.type = packet.type;
         message.size = packet.size;
@@ -447,7 +461,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
     Authentication() {
         // Client.consoleLog("====DER===",this.projectID,this.projectSecret,this.clientToken);
         // this.Connect('wss://kurento3.togee.io:8443/call');
-        _Services_Auth__WEBPACK_IMPORTED_MODULE_2__["default"].Authorization(this.projectID, this.projectSecretKey).then(response => {
+        _Services_Auth__WEBPACK_IMPORTED_MODULE_2__["default"].Authorization(this.projectID, this.projectSecretKey).then((response) => {
             Client.consoleLog("====Authorization Chat====", response);
             if (response.status == 200) {
                 //"wss://vte3.vdotok.com:443"
@@ -464,24 +478,24 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
     //////////////////Presence Related Methods
     //////////////////////////////////////////////////////////////////////////////
     SendPresence(channelData) {
-        const options = { "key": channelData.key, "channel": channelData.channel, "changes": true, "status": true };
+        const options = { key: channelData.key, channel: channelData.channel, changes: true, status: true };
         this.Connection.publish("emitter/presence/", JSON.stringify(options), {}, () => {
-            this.Connection.on('message', (topic, message, packet) => {
-                //presence sent
-            });
+            /*this.Connection.on("message", (topic: any, message: any, packet: any) => {
+              //presence sent
+            });*/
         });
     }
     //////////////////Presence Related Methods
     //////////////////////////////////////////////////////////////////////////////
     SetPresenceEvent(JsonData) {
-        if (JsonData["event"] == 'status') {
+        if (JsonData["event"] == "status") {
             // Client.consoleLog("it will be subscribed===",JsonData);
             this.emit("subscribed", JsonData);
         }
-        if (JsonData["event"] == 'subscribe') {
+        if (JsonData["event"] == "subscribe") {
             this.emit("online", JsonData);
         }
-        if (JsonData["event"] == 'unsubscribe') {
+        if (JsonData["event"] == "unsubscribe") {
             this.emit("offline", JsonData);
         }
     }
@@ -506,6 +520,9 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
             // Client.consoleLog("isFileHeader Files",files);
             if (files != undefined) {
                 const newContent = files.Content;
+                if (this.Connection) {
+                    this.Connection._sendPacket({ cmd: "pingreq" });
+                }
                 files.Content = newContent.concat(JsonPacket.content);
                 this.QueueFiles[JsonPacket.headerId] = Object.assign({}, files);
                 //Client.consoleLog("isFileHeader isJsonPacket",JsonPacket,files.Header.totalPacket==JsonPacket.packetNo);
@@ -562,9 +579,9 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
                                 {
                                     clearInterval(pingInterval);
                                 }
-                            } 
+                            }
                             `;
-        const blob = new Blob([response], { type: 'application/javascript' });
+        const blob = new Blob([response], { type: "application/javascript" });
         this.pingWorker = new Worker(URL.createObjectURL(blob));
         if (this.pingWorker) {
             // event processing
@@ -577,7 +594,7 @@ class Client extends events__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"] {
                 }
             };
             //Start pinging server
-            this.pingWorker.postMessage({ method: 'startPingInterval', interval: 3000 });
+            this.pingWorker.postMessage({ method: "startPingInterval", interval: 3000 });
         }
     }
 }
@@ -5155,7 +5172,6 @@ MqttClient.prototype._setupPingTimer = function () {
     this.pingResp = true
     this.pingTimer = reInterval(function () {
       that._checkPing()
-      this.options.keepalive = (this.options.keepalive + Math.random()).toFixed(2)
     }, this.options.keepalive * 1000)
   }
 }
@@ -19908,4 +19924,3 @@ function extend() {
 
 /***/ })
 /******/ ]);
-});
