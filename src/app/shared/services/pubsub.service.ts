@@ -11,9 +11,11 @@ export class PubsubService implements OnDestroy {
 
   constructor() { }
 
+
   public ngOnDestroy(): void {
     this.wsSubscription.unsubscribe();
   }
+
 
   public initConfigure(): void {
     const user = StorageService.getUserData();
@@ -24,6 +26,7 @@ export class PubsubService implements OnDestroy {
     });
     this.Client.Register(user.ref_id.toString(), user.authorization_token.toString());
   }
+
 
   public sendMessage(message): void {
     this.Client.SendMessage(message);
@@ -40,9 +43,11 @@ export class PubsubService implements OnDestroy {
     this.Client.UnSubscribe(groups);
   }
 
+
   public Disconnect(): void {
     this.Client.Disconnect();
   }
+
 
   readMessage(chatMessages) {
     chatMessages.map(chat => {
@@ -50,8 +55,15 @@ export class PubsubService implements OnDestroy {
     });
   }
 
+
   readSingleMessage(chatMessages) {
     this.Client.SendReceipt(chatMessages);
+  }
+
+  
+  sendNotificationOnGroupUpdation(obj) {
+    console.log("** sendNotificationOnGroupUpdation")
+    this.Client.SendNotification(obj);
   }
 
 }

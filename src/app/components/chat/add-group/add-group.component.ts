@@ -1,41 +1,54 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import FormsHandler from 'src/app/shared/FormsHandler/FormsHandler';
-import { BaseService } from 'src/app/shared/services/base.service';
-import { PubsubService } from 'src/app/shared/services/pubsub.service';
-import { StorageService } from 'src/app/shared/services/storage.service';
-import { ToastrService } from 'ngx-toastr';
-import { fromEvent } from 'rxjs/internal/observable/fromEvent';
-import { map } from 'rxjs/internal/operators/map';
-import { debounceTime } from 'rxjs/internal/operators/debounceTime';
-import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
-import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { startWith } from 'rxjs/operators';
-import { of } from 'rxjs';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
+import FormsHandler from "src/app/shared/FormsHandler/FormsHandler";
+import { BaseService } from "src/app/shared/services/base.service";
+import { PubsubService } from "src/app/shared/services/pubsub.service";
+import { StorageService } from "src/app/shared/services/storage.service";
+import { ToastrService } from "ngx-toastr";
+import { fromEvent } from "rxjs/internal/observable/fromEvent";
+import { map } from "rxjs/internal/operators/map";
+import { debounceTime } from "rxjs/internal/operators/debounceTime";
+import { distinctUntilChanged } from "rxjs/internal/operators/distinctUntilChanged";
+import { mergeMap } from "rxjs/internal/operators/mergeMap";
+import { startWith } from "rxjs/operators";
+import { of } from "rxjs";
 
 @Component({
-  selector: 'add-group',
-  templateUrl: './add-group.component.html',
-  styleUrls: ['./add-group.component.scss']
+  selector: "add-group",
+  templateUrl: "./add-group.component.html",
+  styleUrls: ["./add-group.component.scss"],
 })
 export class AddGroupComponent implements OnInit {
   currentUserName = StorageService.getAuthUsername();
   currentUserData = StorageService.getUserData();
-  @Output() changeEvent = new EventEmitter<string>();
+  @Output() changeEvent = new EventEmitter<object>(); //<string>
   form: FormGroup;
   loading = true;
   addGroupModel = false;
   AllUsers = [];
   activeChat: any = {
-    chatHistory: []
+    chatHistory: [],
   };
-  message = '';
-  group_title = '';
-  groupnameError = '';
+  message = "";
+  group_title = "";
+  groupnameError = "";
   dialogRef;
   selectedUsers = [];
   CopyAllUsers = [];
-  @ViewChild('searchInput') searchInput: ElementRef;
+  @ViewChild("searchInput") searchInput: ElementRef;
   @Output() setActiveChat = new EventEmitter<string>();
 
   constructor(
@@ -43,17 +56,22 @@ export class AddGroupComponent implements OnInit {
     private svc: BaseService,
     private toastr: ToastrService,
     private _fb: FormBuilder,
-    private changeDetector: ChangeDetectorRef,
-  ) {
-  }
+    private changeDetector: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.form = this._fb.group({
-      'group_title': new FormControl('', [Validators.required, Validators.maxLength(100)]),
-    }, { updateOn: 'change' });
+    this.form = this._fb.group(
+      {
+        group_title: new FormControl("", [
+          Validators.required,
+          Validators.maxLength(100),
+        ]),
+      },
+      { updateOn: "change" }
+    );
 
-    document.addEventListener("keyup", event => {
-      if (event.code === 'Enter' && !this.loading) {
+    document.addEventListener("keyup", (event) => {
+      if (event.code === "Enter" && !this.loading) {
         this.addGroup();
       }
     });
@@ -61,42 +79,45 @@ export class AddGroupComponent implements OnInit {
 
   ngAfterViewInit(): void {
     if (this.searchInput) {
-      fromEvent(this.searchInput.nativeElement, 'input')
+      fromEvent(this.searchInput.nativeElement, "input")
         .pipe(
           map((event: Event) => (event.target as HTMLInputElement).value),
           debounceTime(1000),
           distinctUntilChanged(),
-          startWith(''),
-          mergeMap(value => {
+          startWith(""),
+          mergeMap((value) => {
             this.loading = true;
             if (!value) {
               const data = {
                 sorting: "ORDER BY full_name ASC",
                 search_field: "full_name",
-                search_value: '',
+                search_value: "",
                 condition: "contains",
-              }
-              return this.svc.post('AllUsers', data).pipe(map(res => {
-                if(!(res.users && res.users.length))
-                {
-                  res.users = [];
-                }
-                this.CopyAllUsers = [...res.users];
-                return res;
-              }))
+              };
+              return this.svc.post("AllUsers", data).pipe(
+                map((res) => {
+                  if (!(res.users && res.users.length)) {
+                    res.users = [];
+                  }
+                  this.CopyAllUsers = [...res.users];
+                  return res;
+                })
+              );
             }
             const temparaay = [...this.CopyAllUsers];
-            const filteruser = temparaay.filter(user => {
+            const filteruser = temparaay.filter((user) => {
               const searchValue = value.toLowerCase();
-              if (user.full_name.toLowerCase().startsWith(searchValue)) { return -1; }
+              if (user.full_name.toLowerCase().startsWith(searchValue)) {
+                return -1;
+              }
             });
             const returnData = {
-              users: filteruser
-            }
-            return of(returnData)
-          }),
+              users: filteruser,
+            };
+            return of(returnData);
+          })
         )
-        .subscribe(res => {
+        .subscribe((res) => {
           this.loading = false;
           if (!res.users || !res.users.length) {
             this.toastr.error("Opps!", "No contacts found");
@@ -105,94 +126,113 @@ export class AddGroupComponent implements OnInit {
             this.AllUsers = res.users;
           }
           this.setAlreadySelected();
-        })
+        });
     }
   }
 
   setAlreadySelected() {
-    this.selectedUsers.map(user => {
-      const userIndex = this.AllUsers.find(alluser => alluser.user_id == user.user_id);
-      if (userIndex) userIndex['selected'] = true;
+    this.selectedUsers.map((user) => {
+      const userIndex = this.AllUsers.find(
+        (alluser) => alluser.user_id == user.user_id
+      );
+      if (userIndex) userIndex["selected"] = true;
     });
     this.changeDetector.detectChanges();
   }
 
   selectContact(contact) {
-    this.groupnameError = '';
-    contact['selected'] = !contact['selected'];
+    this.groupnameError = "";
+    contact["selected"] = !contact["selected"];
     this.changeDetector.detectChanges();
     this.selectedUsers.push(contact);
-    this.selectedUsers = this.selectedUsers.filter(user => user.selected);
+    this.selectedUsers = this.selectedUsers.filter((user) => user.selected);
     this.selectedUsers = [...new Set(this.selectedUsers)];
     if (!this.selectedUsers.length) {
-      this.groupnameError = 'Please Select Contacts';
+      this.groupnameError = "Please Select Contacts";
     } else if (this.selectedUsers.length > 4) {
-      this.groupnameError = 'Participants cannot be more than 4';
+      this.groupnameError = "Participants cannot be more than 4";
     }
-    console.error('groupnameError', this.groupnameError);
+    console.error("groupnameError", this.groupnameError);
     this.changeDetector.detectChanges();
   }
 
   openDialog(content): void {
-    this.groupnameError = '';
-    this.selectedUsers = this.selectedUsers.filter(user => user.selected);
+    this.groupnameError = "";
+    this.selectedUsers = this.selectedUsers.filter((user) => user.selected);
     this.changeDetector.detectChanges();
     if (!this.selectedUsers.length) {
-      this.groupnameError = 'Please Select Contacts';
+      this.groupnameError = "Please Select Contacts";
       return;
     } else if (this.selectedUsers.length > 4) {
-      this.groupnameError = 'Participants cannot be more than 4';
+      this.groupnameError = "Participants cannot be more than 4";
       return;
     }
     if (this.selectedUsers.length == 1) {
-      const useridArray = this.selectedUsers.map(user => user.user_id);
+      const useridArray = this.selectedUsers.map((user) => user.user_id);
       const data = {
         participants: useridArray,
         auto_created: useridArray.length > 1 ? 0 : 1,
         group_title: "One to One chat",
-      }
-      this.svc.post('CreateGroup', data).subscribe(v => {
+      };
+      this.svc.post("CreateGroup", data).subscribe((v) => {
         this.changeDetector.detectChanges();
         if (v && v.status == 200) {
-          this.groupnameError = '';
+          this.groupnameError = "";
           this.setActiveChat.emit(v.group);
           this.form.reset();
         }
         this.selectedUsers = [];
         this.changeDetector.detectChanges();
         this.loading = false;
-        this.changeEvent.emit("THREAD");
+        this.changeEvent.emit({event: "THREAD", group: v.group});
       });
-
     } else {
       this.addGroupModel = true;
     }
   }
 
+  //Called when user clicks on done button
   addGroup() {
     FormsHandler.validateForm(this.form);
-    const useridArray = this.selectedUsers.map(user => user.user_id);
+    const useridArray = this.selectedUsers.map((user) => user.user_id);
     if (this.form.invalid || !useridArray.length || this.loading) return;
     if (useridArray.length > 5) {
-      this.toastr.error('OPPS!', 'participants Can not be more than 5!');
+      this.toastr.error("OPPS!", "participants Can not be more than 5!");
       return;
     }
     this.loading = true;
     this.changeDetector.detectChanges();
     let data = {
       participants: useridArray,
-      auto_created: useridArray.length > 1 ? 0 : 1
-    }
+      auto_created: useridArray.length > 1 ? 0 : 1,
+    };
     data = {
       ...data,
-      ...this.form.value
+      ...this.form.value,
     };
-    this.svc.post('CreateGroup', data).subscribe(v => {
+    this.svc.post("CreateGroup", data).subscribe((v) => {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
-        this.groupnameError = '';
+        //ABM - M2M GROUP CASE:
+        let participants_ref_ids = [];
+        this.selectedUsers.map((p) => {
+          participants_ref_ids.push(p.ref_id);
+        });
+        //participants_ref_ids.push(StorageService.getUserData().ref_id);
+        const groupInfo = {
+          from: StorageService.getUserData().ref_id,
+          to: participants_ref_ids,
+          action: "new",
+          groupModel: v,
+        };
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+
+        //
+        this.changeEvent.emit({event: "THREAD", group: v.group}); //added this because after creating m2m group, no group list is showing
+        //
+        this.groupnameError = "";
         this.setActiveChat.emit(v.group);
-        this.toastr.success('Success!', 'The group has been created!');
+        this.toastr.success("Success!", "The group has been created!");
         this.closemodel();
         this.form.reset();
       }
@@ -205,13 +245,15 @@ export class AddGroupComponent implements OnInit {
   closemodel() {
     this.selectedUsers = [];
     this.addGroupModel = false;
-    this.AllUsers.forEach(element => element['selected'] = false);
-    this.changeEvent.emit("THREAD");
+    this.AllUsers.forEach((element) => (element["selected"] = false));
+    this.changeEvent.emit({event: "THREAD", group:{}});
     this.changeDetector.detectChanges();
   }
 
   backScreen() {
-    this.changeEvent.emit("CHAT");
-  }
+    console.log("backScreen  - addp-group");
 
+
+    this.changeEvent.emit({event: "CHAT", group:{}});
+  }
 }

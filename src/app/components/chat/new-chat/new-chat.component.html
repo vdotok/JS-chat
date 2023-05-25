@@ -1,6 +1,10 @@
 <div class="newChatHeader">
   <div class="newChatLeft hand">
-    <img src="./assets/images/arrow-left.png" class="arrowLeft" (click)="backScreen()" />
+    <img
+      src="./assets/images/arrow-left.png"
+      class="arrowLeft"
+      (click)="backScreen()"
+    />
     <p class="newChatHeading">New Chat</p>
   </div>
   <div class="newChatRight hand">
@@ -26,17 +30,15 @@
   <!-- </div> -->
 </div>
 <div class="contactListContainer max-height">
-
   <ng-container *ngFor="let user of AllUsers">
-    <div class="contactListCard hand" (click)="startChat(user)">
+    <div class="contactListCard hand" (click)="startChat(user, 'chat')">
       <div class="contactListCardLeft">
         <img src="./assets/images/user.png" class="ListCardIcon" />
-        <p class="ListCardName text-capitalize pb-1">{{user.full_name}}</p>
+        <p class="ListCardName text-capitalize pb-1">{{ user.full_name }}</p>
       </div>
       <div class="contactListCardRight justify-content-end pl-1">
-        <img src="./assets/images/chat.png" class=" pl-1 ListCardButton hand" />
+        <img src="./assets/images/chat.png" class="pl-1 ListCardButton hand" />
       </div>
     </div>
   </ng-container>
-
 </div>

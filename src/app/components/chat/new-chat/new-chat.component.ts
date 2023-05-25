@@ -7,6 +7,8 @@ import { map } from 'rxjs/internal/operators/map';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { BaseService } from 'src/app/shared/services/base.service';
 import { PubsubService } from 'src/app/shared/services/pubsub.service';
+import { StorageService } from "../../../shared/services/storage.service";
+
 import { ToastrService } from 'ngx-toastr';
 import { startWith } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -20,7 +22,7 @@ export class NewChatComponent implements OnInit {
   loading = true;
   AllUsers = [];
   CopyAllUsers = [];
-  @Output() changeEvent = new EventEmitter<string>();
+  @Output() changeEvent = new EventEmitter<object>(); //<string>
   @ViewChild('searchInput') searchInput: ElementRef;
   @Output() setActiveChat = new EventEmitter<string>();
 
@@ -87,21 +89,27 @@ export class NewChatComponent implements OnInit {
 
 
   backScreen() {
-    this.changeEvent.emit("THREAD");
+    console.log("backscreen - new-chat");
+   
+    
+    this.changeEvent.emit({event: "THREAD", group: {}});
   }
 
+  //Called when "Add Group Chat" heading clicked
   addGroupEvent() {
-    this.changeEvent.emit("GROUP");
+    this.changeEvent.emit({event: "GROUP", group: {}});
   }
 
-  startChat(user) {
+  startChat(user, val) {
     if (this.loading) return;
     this.loading = true;
     const data = {
-      group_title: user.full_name,
+      group_title: StorageService.getUserData().username + "-" + user.full_name,//TTuser.full_name,
       participants: [user.user_id],
       auto_created: 1
     }
+    console.log("** new group creation: ", StorageService.getUserData());
+
     this.svc.post('CreateGroup', data).subscribe(v => {
       if (v && v.status == 200) {
         const subscribedata = {
@@ -112,7 +120,23 @@ export class NewChatComponent implements OnInit {
         const data = [];
         data.push(subscribedata)
         this.pubsubService.subscribeToChat(data);
-        this.changeEvent.emit("THREAD");
+
+
+        //ABM
+        const groupInfo = {
+          from: StorageService.getUserData().ref_id,
+          to: [user.ref_id],
+          action: "new",
+          groupModel: v
+          
+        };
+        console.log("** notification send on group creation :\n\n", groupInfo, "\n\n\n\n", v, "\n",val);
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+        //
+
+
+        this.changeEvent.emit({event: "THREAD", group: v.group});
+        v.group.clicked_item = val;
         this.setActiveChat.emit(v.group);
         this.loading = false;
       }
