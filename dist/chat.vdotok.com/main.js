@@ -334,44 +334,44 @@ class AddGroupComponent {
     this.changeDetector = changeDetector;
     this.currentUserName = src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername();
     this.currentUserData = src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData();
-    this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
+    this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_5__.EventEmitter(); //<string>
     this.loading = true;
     this.addGroupModel = false;
     this.AllUsers = [];
     this.activeChat = {
       chatHistory: []
     };
-    this.message = '';
-    this.group_title = '';
-    this.groupnameError = '';
+    this.message = "";
+    this.group_title = "";
+    this.groupnameError = "";
     this.selectedUsers = [];
     this.CopyAllUsers = [];
     this.setActiveChat = new _angular_core__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
   }
   ngOnInit() {
     this.form = this._fb.group({
-      'group_title': new _angular_forms__WEBPACK_IMPORTED_MODULE_6__.FormControl('', [_angular_forms__WEBPACK_IMPORTED_MODULE_6__.Validators.required, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.Validators.maxLength(100)])
+      group_title: new _angular_forms__WEBPACK_IMPORTED_MODULE_6__.FormControl("", [_angular_forms__WEBPACK_IMPORTED_MODULE_6__.Validators.required, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.Validators.maxLength(100)])
     }, {
-      updateOn: 'change'
+      updateOn: "change"
     });
     document.addEventListener("keyup", event => {
-      if (event.code === 'Enter' && !this.loading) {
+      if (event.code === "Enter" && !this.loading) {
         this.addGroup();
       }
     });
   }
   ngAfterViewInit() {
     if (this.searchInput) {
-      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_7__.fromEvent)(this.searchInput.nativeElement, 'input').pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_8__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_9__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_10__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_11__.startWith)(''), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_12__.mergeMap)(value => {
+      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_7__.fromEvent)(this.searchInput.nativeElement, "input").pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_8__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_9__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_10__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_11__.startWith)(""), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_12__.mergeMap)(value => {
         this.loading = true;
         if (!value) {
           const data = {
             sorting: "ORDER BY full_name ASC",
             search_field: "full_name",
-            search_value: '',
+            search_value: "",
             condition: "contains"
           };
-          return this.svc.post('AllUsers', data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_8__.map)(res => {
+          return this.svc.post("AllUsers", data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_8__.map)(res => {
             if (!(res.users && res.users.length)) {
               res.users = [];
             }
@@ -405,34 +405,34 @@ class AddGroupComponent {
   setAlreadySelected() {
     this.selectedUsers.map(user => {
       const userIndex = this.AllUsers.find(alluser => alluser.user_id == user.user_id);
-      if (userIndex) userIndex['selected'] = true;
+      if (userIndex) userIndex["selected"] = true;
     });
     this.changeDetector.detectChanges();
   }
   selectContact(contact) {
-    this.groupnameError = '';
-    contact['selected'] = !contact['selected'];
+    this.groupnameError = "";
+    contact["selected"] = !contact["selected"];
     this.changeDetector.detectChanges();
     this.selectedUsers.push(contact);
     this.selectedUsers = this.selectedUsers.filter(user => user.selected);
     this.selectedUsers = [...new Set(this.selectedUsers)];
     if (!this.selectedUsers.length) {
-      this.groupnameError = 'Please Select Contacts';
+      this.groupnameError = "Please Select Contacts";
     } else if (this.selectedUsers.length > 4) {
-      this.groupnameError = 'Participants cannot be more than 4';
+      this.groupnameError = "Participants cannot be more than 4";
     }
-    console.error('groupnameError', this.groupnameError);
+    console.error("groupnameError", this.groupnameError);
     this.changeDetector.detectChanges();
   }
   openDialog(content) {
-    this.groupnameError = '';
+    this.groupnameError = "";
     this.selectedUsers = this.selectedUsers.filter(user => user.selected);
     this.changeDetector.detectChanges();
     if (!this.selectedUsers.length) {
-      this.groupnameError = 'Please Select Contacts';
+      this.groupnameError = "Please Select Contacts";
       return;
     } else if (this.selectedUsers.length > 4) {
-      this.groupnameError = 'Participants cannot be more than 4';
+      this.groupnameError = "Participants cannot be more than 4";
       return;
     }
     if (this.selectedUsers.length == 1) {
@@ -442,28 +442,32 @@ class AddGroupComponent {
         auto_created: useridArray.length > 1 ? 0 : 1,
         group_title: "One to One chat"
       };
-      this.svc.post('CreateGroup', data).subscribe(v => {
+      this.svc.post("CreateGroup", data).subscribe(v => {
         this.changeDetector.detectChanges();
         if (v && v.status == 200) {
-          this.groupnameError = '';
+          this.groupnameError = "";
           this.setActiveChat.emit(v.group);
           this.form.reset();
         }
         this.selectedUsers = [];
         this.changeDetector.detectChanges();
         this.loading = false;
-        this.changeEvent.emit("THREAD");
+        this.changeEvent.emit({
+          event: "THREAD",
+          group: v.group
+        });
       });
     } else {
       this.addGroupModel = true;
     }
   }
+  //Called when user clicks on done button
   addGroup() {
     src_app_shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_0__["default"].validateForm(this.form);
     const useridArray = this.selectedUsers.map(user => user.user_id);
     if (this.form.invalid || !useridArray.length || this.loading) return;
     if (useridArray.length > 5) {
-      this.toastr.error('OPPS!', 'participants Can not be more than 5!');
+      this.toastr.error("OPPS!", "participants Can not be more than 5!");
       return;
     }
     this.loading = true;
@@ -476,12 +480,31 @@ class AddGroupComponent {
       ...data,
       ...this.form.value
     };
-    this.svc.post('CreateGroup', data).subscribe(v => {
+    this.svc.post("CreateGroup", data).subscribe(v => {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
-        this.groupnameError = '';
+        //ABM - M2M GROUP CASE:
+        let participants_ref_ids = [];
+        this.selectedUsers.map(p => {
+          participants_ref_ids.push(p.ref_id);
+        });
+        //participants_ref_ids.push(StorageService.getUserData().ref_id);
+        const groupInfo = {
+          from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData().ref_id,
+          to: participants_ref_ids,
+          action: "new",
+          groupModel: v
+        };
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+        //
+        this.changeEvent.emit({
+          event: "THREAD",
+          group: v.group
+        }); //added this because after creating m2m group, no group list is showing
+        //
+        this.groupnameError = "";
         this.setActiveChat.emit(v.group);
-        this.toastr.success('Success!', 'The group has been created!');
+        this.toastr.success("Success!", "The group has been created!");
         this.closemodel();
         this.form.reset();
       }
@@ -493,12 +516,19 @@ class AddGroupComponent {
   closemodel() {
     this.selectedUsers = [];
     this.addGroupModel = false;
-    this.AllUsers.forEach(element => element['selected'] = false);
-    this.changeEvent.emit("THREAD");
+    this.AllUsers.forEach(element => element["selected"] = false);
+    this.changeEvent.emit({
+      event: "THREAD",
+      group: {}
+    });
     this.changeDetector.detectChanges();
   }
   backScreen() {
-    this.changeEvent.emit("CHAT");
+    console.log("backScreen  - addp-group");
+    this.changeEvent.emit({
+      event: "CHAT",
+      group: {}
+    });
   }
 }
 AddGroupComponent.ɵfac = function AddGroupComponent_Factory(t) {
@@ -568,7 +598,7 @@ AddGroupComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5_
     }
   },
   dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_4__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_6__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.FormControlName, _angular_common__WEBPACK_IMPORTED_MODULE_15__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_15__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_15__.NgIf],
-  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.selectuser[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n  min-width: 30px;\n  padding-right: 5px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L2FkZC1ncm91cC9hZGQtZ3JvdXAuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSw2QkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGOztBQUNBO0VBQ0UsK0JBQUE7QUFFRjs7QUFDQTtFQUNFLG9DQUFBO0VBQ0EseUJBQUE7QUFFRjs7QUFDQTtFQUNFLHlCQUFBO0VBQ0EsZUFBQTtFQUNBLGtCQUFBO0FBRUYiLCJzb3VyY2VzQ29udGVudCI6WyIucm9vbU5hbWVUZXh0IHtcbiAgZm9udC1mYW1pbHk6IG1hbnJvcGUtc2VtaWJvbGQ7XG4gIGZvbnQtc2l6ZTogMzRweDtcbiAgbGluZS1oZWlnaHQ6IDM4cHg7XG4gIGxldHRlci1zcGFjaW5nOiAtMC4xMnB4O1xuICBjb2xvcjogIzMxMzk0ZDtcbn1cbi5jaGF0YnRuIHtcbiAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgI2ViZWRmNDtcbn1cblxuLmFjdGl2ZSB7XG4gIGJhY2tncm91bmQtY29sb3I6ICNiMGQ3ZGQgIWltcG9ydGFudDtcbiAgYm9yZGVyOiAxcHggc29saWQgIzIxOTZmMztcbn1cblxuLnNlbGVjdHVzZXIge1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGZsZXgtZW5kO1xuICBtaW4td2lkdGg6IDMwcHg7XG4gIHBhZGRpbmctcmlnaHQ6IDVweDtcbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */"]
+  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.selectuser[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n  min-width: 30px;\n  padding-right: 5px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L2FkZC1ncm91cC9hZGQtZ3JvdXAuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSw2QkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGOztBQUNBO0VBQ0UsK0JBQUE7QUFFRjs7QUFDQTtFQUNFLG9DQUFBO0VBQ0EseUJBQUE7QUFFRjs7QUFDQTtFQUNFLHlCQUFBO0VBQ0EsZUFBQTtFQUNBLGtCQUFBO0FBRUYiLCJzb3VyY2VzQ29udGVudCI6WyIucm9vbU5hbWVUZXh0IHtcclxuICBmb250LWZhbWlseTogbWFucm9wZS1zZW1pYm9sZDtcclxuICBmb250LXNpemU6IDM0cHg7XHJcbiAgbGluZS1oZWlnaHQ6IDM4cHg7XHJcbiAgbGV0dGVyLXNwYWNpbmc6IC0wLjEycHg7XHJcbiAgY29sb3I6ICMzMTM5NGQ7XHJcbn1cclxuLmNoYXRidG4ge1xyXG4gIGJvcmRlci1yaWdodDogMXB4IHNvbGlkICNlYmVkZjQ7XHJcbn1cclxuXHJcbi5hY3RpdmUge1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICNiMGQ3ZGQgIWltcG9ydGFudDtcclxuICBib3JkZXI6IDFweCBzb2xpZCAjMjE5NmYzO1xyXG59XHJcblxyXG4uc2VsZWN0dXNlciB7XHJcbiAganVzdGlmeS1jb250ZW50OiBmbGV4LWVuZDtcclxuICBtaW4td2lkdGg6IDMwcHg7XHJcbiAgcGFkZGluZy1yaWdodDogNXB4O1xyXG59XHJcbiJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -583,6 +613,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ChatComponent": () => (/* binding */ ChatComponent)
 /* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! rxjs/internal/observable/fromEvent */ 3280);
 /* harmony import */ var rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! rxjs/internal/operators/debounceTime */ 1989);
 /* harmony import */ var rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! rxjs/internal/operators/distinctUntilChanged */ 8977);
@@ -591,7 +622,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/shared/services/storage.service */ 1303);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 2508);
 /* harmony import */ var src_app_shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/FormsHandler/FormsHandler */ 7724);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/shared/services/pubsub.service */ 235);
 /* harmony import */ var src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/shared/services/base.service */ 2365);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/router */ 124);
@@ -603,6 +633,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _add_group_add_group_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./add-group/add-group.component */ 4718);
 /* harmony import */ var _new_chat_new_chat_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./new-chat/new-chat.component */ 5844);
 /* harmony import */ var _shared_pipe_safeurl__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../shared/pipe/safeurl */ 3686);
+
 
 
 
@@ -1148,44 +1179,49 @@ class ChatComponent {
     this.toastr = toastr;
     this.changeDetector = changeDetector;
     this._fb = _fb;
+    this.setActiveChatt = new _angular_core__WEBPACK_IMPORTED_MODULE_9__.EventEmitter();
+    this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_9__.EventEmitter();
     this.editGroupModel = false;
     this.loading = true;
     this.AllGroups = [];
     this.activeChat = {
       chatHistory: []
     };
-    this.message = '';
+    this.message = "";
     this.currentUserName = src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername();
     this.currentUserData = src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData();
-    this.threadType = 'THREAD';
+    this.threadType = "THREAD";
     this.fileToSend = null;
     this.isActiveThread = false;
-    this.popupimagesrc = '';
-    this.screen = 'CHAT';
+    this.popupimagesrc = "";
+    this.screen = "CHAT";
     this.sdkconnected = false;
     this.setToActive = null;
     this.groupForm = this._fb.group({
-      'group_id': new _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControl('', [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]),
-      'group_title': new _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControl('', [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.maxLength(100)])
+      group_id: new _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControl("", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]),
+      group_title: new _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControl("", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.maxLength(100)])
     }, {
-      updateOn: 'change'
+      updateOn: "change"
     });
     this.pubsubService.initConfigure();
   }
   ngOnInit() {
     this.pubsubService.Client.on("connect", response => {
-      console.error("connect", response);
+      console.log("*** on-connect response:\n", response);
       this.sdkconnected = true;
       if (!this.AllGroups.length) {
         this.getAllGroups();
       }
+    });
+    this.pubsubService.Client.on("register", response => {
+      console.log("*** on-register response:\n", response);
     });
     this.pubsubService.Client.on("disconnect", response => {
       console.log("disconnect", response);
       this.sdkconnected = false;
     });
     document.addEventListener("keyup", event => {
-      if (event.code === 'Enter') {
+      if (event.code === "Enter") {
         this.sendTextMessage();
       }
     });
@@ -1195,27 +1231,35 @@ class ChatComponent {
       console.log("authentication_error", res);
     });
     this.pubsubService.Client.on("offline", response => {
-      console.log("offline", response);
+      console.log("*** on-offline", response);
       this.setOfflineStatus(response);
     });
     this.pubsubService.Client.on("online", response => {
-      console.log("online", response);
+      console.log("*** on-online", response);
       this.setOnlineStatus(response);
     });
+    this.pubsubService.Client.on("subscribed", response => {
+      console.log("subscribed", response);
+      this.setOnlineStatusforSubscribe(response);
+    });
     this.pubsubService.Client.on("message", response => {
+      console.log("*** on-message response: \n\n", response);
       response = JSON.parse(JSON.stringify(response));
       //console.trace("new message", response);
-      if (response.type == 'text' || response.type == 'file' || response.type == 'image' || response.type == 'audio' || response.type == 'video') {
+      if (response.data) {
+        this.updateGroup(response);
+      }
+      if (response.type == "text" || response.type == "file" || response.type == "image" || response.type == "audio" || response.type == "video") {
         this.scroll();
         const chatthread = this.findChatThread(response.to);
         const isActiveThread = chatthread.id == this.activeChat.id;
-        chatthread['unReadCount'] = isActiveThread ? 0 : (chatthread['unReadCount'] || 0) + 1;
+        chatthread["unReadCount"] = isActiveThread ? 0 : (chatthread["unReadCount"] || 0) + 1;
         response = this.messageBy(chatthread, response);
-        response['isRead'] = isActiveThread;
-        response['auto_created'] = chatthread['auto_created'];
-        chatthread['lastMessage'] = response.content;
-        chatthread['time'] = new Date(response.id);
-        chatthread['type'] = response.type;
+        response["isRead"] = isActiveThread;
+        response["auto_created"] = chatthread["auto_created"];
+        chatthread["lastMessage"] = response.content;
+        chatthread["time"] = new Date(response.id);
+        chatthread["type"] = response.type;
         this.pushMessage(chatthread, response);
         this.readSingleMessage(response, isActiveThread);
         setTimeout(() => {
@@ -1224,32 +1268,28 @@ class ChatComponent {
           });
         }, 500);
         this.changeDetector.detectChanges();
-      } else if (response.type == 'typing') {
+      } else if (response.type == "typing") {
         this.setUserTyping(response);
       } else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
         if (response.to != undefined) chName = response.to;
         const chatthread = this.findChatThread(chName);
-        const message = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(chatthread.chatHistory, 'id', response.messageId);
+        const message = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(chatthread.chatHistory, "id", response.messageId);
         if (message) {
-          message['readCount'] = (message['readCount'] || 0) + 1;
+          message["readCount"] = (message["readCount"] || 0) + 1;
         }
         this.changeDetector.detectChanges();
       }
     });
-    this.pubsubService.Client.on("subscribed", response => {
-      console.log("subscribed", response);
-      this.setOnlineStatusforSubscribe(response);
-    });
     if (this.messageInputElement) {
-      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_11__.fromEvent)(this.messageInputElement.nativeElement, 'input').pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_12__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_13__.debounceTime)(3000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_14__.distinctUntilChanged)()).subscribe(data => {
+      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_11__.fromEvent)(this.messageInputElement.nativeElement, "input").pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_12__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_13__.debounceTime)(3000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_14__.distinctUntilChanged)()).subscribe(data => {
         const sendMessage = {
           status: 0,
           size: 0,
           type: "typing",
           isGroupMessage: false,
           from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
-          content: '0',
+          content: "0",
           id: new Date().getTime().toString(),
           key: this.activeChat.channel_key,
           to: this.activeChat.channel_name,
@@ -1259,17 +1299,144 @@ class ChatComponent {
       });
     }
   }
+  updateGroup(grp_info) {
+    let new_group = grp_info.data.groupModel.group;
+    console.log("$$$$ in update group function \n\n", {
+      grp_info
+    }, {
+      new_group
+    });
+    // return;
+    if (grp_info.data.action == "new") {
+      let i = this.AllGroups.findIndex(grp => grp.channel_name == new_group.channel_name);
+      if (i === -1) {
+        let chat = grp_info.data.groupModel.group;
+        let subscribedata = {
+          key: chat.channel_key,
+          channel: chat.channel_name
+        };
+        let data = [];
+        data.push(subscribedata);
+        this.pubsubService.subscribeToChat(data);
+        console.log("!!!!!! grp", subscribedata);
+        //this.pubsubService.subscribeToChat(data);
+        if (chat["participants"].length) {
+          chat["participants"] = chat["participants"].map(r => {
+            r["username"] = r["username"] || r["full_name"];
+            return r;
+          });
+        }
+        chat["chatTitle"] = chat.auto_created ? chat["participants"][0]["full_name"] : chat.group_title;
+        chat["Online"] = false;
+        chat["key"] = chat.channel_key;
+        chat["channel"] = chat.channel_name;
+        chat["chatHistory"] = [];
+        chat["TotalParticipants"] = chat["participants"].length;
+        chat["onlineParticipants"] = 1;
+        chat["isSeen"] = true;
+        console.log("!!! final grp before pushing: \n\n", this, "\n", chat, "\n\n", this.AllGroups);
+        this.AllGroups.push(chat);
+        // this.setActiveChat(chat);
+        this.changeEvent.emit("THREAD");
+        //chat.clicked_item = "chat";
+        this.setActiveChatt.emit(chat);
+        this.loading = false;
+        // console.log("** group added successfully\n", grp_info, "\n");  //{new_group}, {index}, this.AllGroups
+      }
+    }
+
+    if (grp_info.data.action == "delete") {
+      //console.log("$$ group deleted successfully-before\n" , this.AllGroups);
+      // let cn = grp_info.data.groupModel;
+      let index = this.AllGroups.findIndex(grp => grp.channel_name == new_group.channel_name);
+      if (index > -1) {
+        this.AllGroups.splice(index, 1);
+        this.pubsubService.unsubscribeToChat({
+          key: new_group.channel_key,
+          channel: new_group.channel_name
+        });
+        this.activeChat = {};
+        this.changeDetector.detectChanges();
+      }
+      console.log("1234** group deleted successfully\n", grp_info, "\n", this.activeChat, this.loading, !this.activeChat.chatTitle && !this.loading); //{new_group}, {index}, this.AllGroups
+    }
+
+    if (grp_info.data.action == "modify") {
+      let grp_ind = this.AllGroups.findIndex(g => g.channel_name === new_group.channel_name);
+      // console.log("*** edit notification:\n", new_group, "\n", this.AllGroups, "\n");
+      if (grp_ind > -1) {
+        this.AllGroups[grp_ind].group_title = new_group.group_title;
+        this.AllGroups[grp_ind].chatTitle = new_group.group_title;
+        //console.log("*** edit notification:\n", new_group, "\n", this.AllGroups, "\n",new_group.group.group_title);
+      }
+    }
+  }
+
+  editGroup() {
+    src_app_shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_2__["default"].validateForm(this.groupForm);
+    console.error("this.groupForm.", this.groupForm.invalid);
+    if (this.groupForm.invalid || this.loading) return;
+    const playload = this.groupForm.value;
+    this.loading = true;
+    this.svc.post("RenameGroup", playload).subscribe(v => {
+      if (v && v.status == 200) {
+        //this.getAllGroups(); //Commented this on 22-May-23 because chat history removed when rename group called
+        if (this.activeChat.group_id === playload.group_id && this.activeChat.auto_created === 0) {
+          console.log("&& rename group api calleds", this.activeChat, playload);
+          this.activeChat.group_title = playload.group_title;
+          this.activeChat.chatTitle = playload.group_title;
+        }
+        //ABM
+        let participants_ref_ids = [];
+        v.group.participants.map(p => {
+          participants_ref_ids.push(p.ref_id);
+        });
+        const groupInfo = {
+          from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData().ref_id,
+          to: participants_ref_ids,
+          action: "modify",
+          groupModel: v
+        };
+        console.log("TT *** edit grppp  -sending side:\n", groupInfo, "/nAPI response:", v);
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+        //ABM
+        this.editGroupModel = false;
+        this.loading = false;
+        this.toastr.success("The group has been updated!", "Success!");
+      }
+    });
+  }
   deleteGroup(group) {
     this.loading = true;
     const playload = {
       group_id: group.id
     };
-    this.svc.post('DeleteGroup', playload).subscribe(v => {
+    this.svc.post("DeleteGroup", playload).subscribe(v => {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
         this.loading = false;
-        this.getAllGroups();
-        this.toastr.success('The group has been deleted!', 'Success!');
+        let i = this.AllGroups.findIndex(g => g.id === group.id);
+        this.AllGroups.splice(i, 1);
+        console.log("TTTT ** delete group: ", this.AllGroups, {
+          group
+        }, i);
+        //AMB
+        let participants_ref_ids = [];
+        group.participants.map(p => {
+          participants_ref_ids.push(p.ref_id);
+        });
+        const groupInfo = {
+          from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData().ref_id,
+          to: participants_ref_ids,
+          action: "delete",
+          groupModel: v
+        };
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+        //ABM
+        //this.getAllGroups(); //commented because all groups updated and chat removed 
+        this.activeChat = {};
+        this.loading = false;
+        this.toastr.success("The group has been deleted!", "Success!");
       } else {
         console.error(v.message);
         alert(v.message);
@@ -1277,60 +1444,81 @@ class ChatComponent {
       }
     });
   }
-  openModal(group) {
-    if (group.auto_created) {
-      alert('Can not change One to one group title');
-      return;
+  addNewGroupToAllGroup(group) {
+    this.setToActive = group.id; //jugaar
+    console.log("aaaa - addNewGroupToAllGroup:  ", group, "\n", this.setToActive);
+    let chat = group;
+    if (chat["participants"].length) {
+      chat["participants"] = chat["participants"].map(r => {
+        r["username"] = r["username"] || r["full_name"];
+        return r;
+      });
     }
-    group['group_id'] = group.id;
-    this.groupForm.reset(group);
-    this.editGroupModel = true;
+    chat["chatTitle"] = chat.auto_created ? chat.group_title.split("-")[1] : chat.group_title;
+    //chat.auto_created? chat["participants"][0]["full_name"] : chat.group_title;
+    chat["Online"] = false;
+    chat["key"] = chat.channel_key;
+    chat["channel"] = chat.channel_name;
+    chat["chatHistory"] = [];
+    chat["TotalParticipants"] = chat["participants"].length;
+    chat["onlineParticipants"] = 1;
+    chat["isSeen"] = true;
+    this.AllGroups.push(chat);
+    console.log("aaa allgroups:\n\n", this.AllGroups, chat["participants"][0]["full_name"]);
+    //======================//
+    // **** Subscribing group ****:
+    let subscribedata = {
+      key: chat.channel_key,
+      channel: chat.channel_name
+    };
+    let data = [];
+    data.push(subscribedata);
+    this.pubsubService.subscribeToChat(data);
+    // **** Subscribing group ****:
+    //======================//
+    if (!this.activeChat.chatTitle) {
+      this.activeChat = this.AllGroups.length ? this.AllGroups["0"] : {};
+    }
+    if (this.setToActive) {
+      const indexchat = this.AllGroups.find(group => group.id == this.setToActive);
+      this.activeChat = indexchat ? indexchat : this.AllGroups["0"];
+      this.setToActive = null;
+    }
+    this.isActiveThread = true;
+    setTimeout(() => {
+      this.sortThread();
+    }, 500);
     this.changeDetector.detectChanges();
-  }
-  editGroup() {
-    src_app_shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_2__["default"].validateForm(this.groupForm);
-    console.error("this.groupForm.", this.groupForm.invalid);
-    if (this.groupForm.invalid || this.loading) return;
-    const playload = this.groupForm.value;
-    this.loading = true;
-    this.svc.post('RenameGroup', playload).subscribe(v => {
-      if (v && v.status == 200) {
-        this.getAllGroups();
-        this.editGroupModel = false;
-        this.loading = false;
-        this.toastr.success('The group has been updated!', 'Success!');
-      }
-    });
   }
   getAllGroups() {
     this.loading = true;
-    this.svc.get('AllGroups').subscribe(v => {
+    this.svc.get("AllGroups").subscribe(v => {
       this.loading = false;
       if (v && v.status == 200) {
         this.AllGroups = v.groups.map(chat => {
-          if (chat['participants'].length) {
-            chat['participants'] = chat['participants'].map(r => {
-              r['username'] = r['username'] || r['full_name'];
+          if (chat["participants"].length) {
+            chat["participants"] = chat["participants"].map(r => {
+              r["username"] = r["username"] || r["full_name"];
               return r;
             });
           }
-          chat['chatTitle'] = chat.auto_created ? chat['participants'][0]['full_name'] : chat.group_title;
-          chat['Online'] = false;
-          chat['key'] = chat.channel_key;
-          chat['channel'] = chat.channel_name;
-          chat['chatHistory'] = [];
-          chat['TotalParticipants'] = chat['participants'].length;
-          chat['onlineParticipants'] = 1;
-          chat['isSeen'] = true;
+          chat["chatTitle"] = chat.auto_created ? chat["participants"][0]["full_name"] : chat.group_title;
+          chat["Online"] = false;
+          chat["key"] = chat.channel_key;
+          chat["channel"] = chat.channel_name;
+          chat["chatHistory"] = [];
+          chat["TotalParticipants"] = chat["participants"].length;
+          chat["onlineParticipants"] = 1;
+          chat["isSeen"] = true;
           return chat;
         });
         console.log("this.activeChat.chatTitle", this.activeChat);
         if (!this.activeChat.chatTitle) {
-          this.activeChat = this.AllGroups.length ? this.AllGroups['0'] : {};
+          this.activeChat = this.AllGroups.length ? this.AllGroups["0"] : {};
         }
         if (this.setToActive) {
           const indexchat = this.AllGroups.find(group => group.id == this.setToActive);
-          this.activeChat = indexchat ? indexchat : this.AllGroups['0'];
+          this.activeChat = indexchat ? indexchat : this.AllGroups["0"];
           this.setToActive = null;
         }
         this.isActiveThread = true;
@@ -1342,31 +1530,55 @@ class ChatComponent {
       this.changeDetector.detectChanges();
     });
   }
+  /* ======================================================================================================================= */
+  changeSidebar($event) {
+    this.threadType = $event.event;
+    console.log("changeSidebar:  ", $event);
+    if (this.threadType == "THREAD") {
+      this.addNewGroupToAllGroup($event.group);
+      //this.getAllGroups(); //commented on 24-May-23 because all chat removed
+    }
+  }
+
+  setActiveChat(group) {
+    console.log("aaaa - setActiveChat:  , ", group);
+    this.isActiveThread = group.id == this.activeChat.id;
+    if (!this.isActiveThread) this.message = "";
+    this.activeChat = group;
+    group["unReadCount"] = 0;
+    this.screen = "MSG";
+    this.scroll();
+    group.chatHistory = group.chatHistory || [];
+    this.readsendMessage(group.chatHistory);
+    this.changeDetector.detectChanges();
+  }
+  //Called when group created: 
+  setchat(chat) {
+    console.log("**** aaaa - setChat: ", chat);
+    this.setToActive = chat.id; //chat.id
+    this.addNewGroupToAllGroup(chat);
+  }
+  openModal(group) {
+    if (group.auto_created) {
+      alert("Can not change One to one group title");
+      return;
+    }
+    group["group_id"] = group.id;
+    this.groupForm.reset(group);
+    this.editGroupModel = true;
+    this.changeDetector.detectChanges();
+  }
   checkFileType(content) {
-    let preview = content.includes('text/plain') ? './assets/images/txt.png' : content.includes('/pdf') ? './assets/images/pdf.png' : content.includes('/json') ? './assets/images/json.png' : 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Icon-doc.svg/810px-Icon-doc.svg.png';
-    if (content.includes('video/')) preview = './assets/images/video.png';
-    if (content.includes('audio/')) preview = './assets/images/audio.png';
+    let preview = content.includes("text/plain") ? "./assets/images/txt.png" : content.includes("/pdf") ? "./assets/images/pdf.png" : content.includes("/json") ? "./assets/images/json.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Icon-doc.svg/810px-Icon-doc.svg.png";
+    if (content.includes("video/")) preview = "./assets/images/video.png";
+    if (content.includes("audio/")) preview = "./assets/images/audio.png";
     return preview;
   }
   fileType(content) {
     return content.split(";")[0].split(":")[1];
   }
   findChatThread(channel) {
-    return (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(this.AllGroups, 'channel_name', channel);
-  }
-  setActiveChat(group) {
-    this.isActiveThread = group.id == this.activeChat.id;
-    if (!this.isActiveThread) this.message = '';
-    this.activeChat = group;
-    group['unReadCount'] = 0;
-    this.screen = 'MSG';
-    this.scroll();
-    group.chatHistory = group.chatHistory || [];
-    this.readsendMessage(group.chatHistory);
-    this.changeDetector.detectChanges();
-  }
-  setchat(chat) {
-    this.setToActive = chat.id;
+    return (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(this.AllGroups, "channel_name", channel);
   }
   readSingleMessage(response, isActiveThread) {
     if (response.from == this.currentUserName || !isActiveThread) return;
@@ -1410,7 +1622,7 @@ class ChatComponent {
   getFileType(fileR) {
     let type = "file";
     const filetype = fileR.type;
-    if (filetype.includes('image')) type = "image";else if (filetype.includes('audio')) type = "audio";else if (filetype.includes('video')) type = "video";
+    if (filetype.includes("image")) type = "image";else if (filetype.includes("audio")) type = "audio";else if (filetype.includes("video")) type = "video";
     return type;
   }
   sendTextMessage() {
@@ -1453,7 +1665,7 @@ class ChatComponent {
       to: this.activeChat.channel_name
     };
     this.pubsubService.sendMessage(sendMessage);
-    this.message = '';
+    this.message = "";
     this.scroll();
     if (!(this.AllGroups.length && this.activeChat.id == this.AllGroups[0].id)) {
       this.sortThread();
@@ -1482,46 +1694,46 @@ class ChatComponent {
     const indexchat = this.findChatThread(response.channel);
     if (indexchat) {
       const onlineNumbers = [...new Set(response.who.map(n => n.username))];
-      indexchat['onlineParticipants'] = onlineNumbers && onlineNumbers.length || 1;
-      if (indexchat && indexchat.auto_created) indexchat['Online'] = onlineNumbers.length > 1;
+      indexchat["onlineParticipants"] = onlineNumbers && onlineNumbers.length || 1;
+      if (indexchat && indexchat.auto_created) indexchat["Online"] = onlineNumbers.length > 1;
     }
     this.changeDetector.detectChanges();
   }
   setOnlineStatus(response) {
     const indexchat = this.findChatThread(response.channel);
     if (!indexchat) return;
-    if (indexchat.auto_created) indexchat['Online'] = true;
+    if (indexchat.auto_created) indexchat["Online"] = true;
     if (!indexchat.auto_created) {
-      indexchat['onlineParticipants'] = indexchat['onlineParticipants'] < indexchat['TotalParticipants'] ? indexchat['onlineParticipants'] + 1 : indexchat['onlineParticipants'];
+      indexchat["onlineParticipants"] = indexchat["onlineParticipants"] < indexchat["TotalParticipants"] ? indexchat["onlineParticipants"] + 1 : indexchat["onlineParticipants"];
     }
     this.changeDetector.detectChanges();
   }
   setOfflineStatus(response) {
     const indexchat = this.findChatThread(response.channel);
-    if (indexchat && indexchat.auto_created) indexchat['Online'] = false;
+    if (indexchat && indexchat.auto_created) indexchat["Online"] = false;
     if (!indexchat.auto_created) {
-      indexchat['onlineParticipants'] = indexchat['onlineParticipants'] > 2 ? indexchat['onlineParticipants'] - 1 : 1;
+      indexchat["onlineParticipants"] = indexchat["onlineParticipants"] > 2 ? indexchat["onlineParticipants"] - 1 : 1;
     }
     this.changeDetector.detectChanges();
   }
   setUserTyping(response) {
     if (response.from == this.currentUserData.ref_id) return;
-    const indexchat = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(this.AllGroups, 'channel_name', response.to);
+    const indexchat = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(this.AllGroups, "channel_name", response.to);
     const typinguser = indexchat["participants"].find(e => e.ref_id == response.from);
-    if (response.content == '1') {
-      indexchat['TypingUserList'] = indexchat['TypingUserList'] || [];
-      indexchat['TypingUserList'] = [...new Set([typinguser])];
-    } else if (response.content == '0') {
-      indexchat['TypingUserList'] = indexchat['TypingUserList'].filter(e => e.ref_id != response.from);
+    if (response.content == "1") {
+      indexchat["TypingUserList"] = indexchat["TypingUserList"] || [];
+      indexchat["TypingUserList"] = [...new Set([typinguser])];
+    } else if (response.content == "0") {
+      indexchat["TypingUserList"] = indexchat["TypingUserList"].filter(e => e.ref_id != response.from);
     }
-    indexchat['userTyping'] = indexchat['TypingUserList'].length && response.content != '0';
-    const nameList = indexchat['TypingUserList'].map(userObj => userObj.full_name);
+    indexchat["userTyping"] = indexchat["TypingUserList"].length && response.content != "0";
+    const nameList = indexchat["TypingUserList"].map(userObj => userObj.full_name);
     if (nameList.length == 1) {
-      indexchat['userTypingContent'] = nameList + ' ' + 'is typing...';
+      indexchat["userTypingContent"] = nameList + " " + "is typing...";
     } else if (nameList.length == 2) {
-      indexchat['userTypingContent'] = nameList.join() + ' ' + 'are typing...';
+      indexchat["userTypingContent"] = nameList.join() + " " + "are typing...";
     } else if (nameList.length > 2) {
-      indexchat['userTypingContent'] = nameList.filter((i, j) => j < 2).join() + ' ' + 'and other are typing...';
+      indexchat["userTypingContent"] = nameList.filter((i, j) => j < 2).join() + " " + "and other are typing...";
     }
     // if (indexchat && indexchat.auto_created) {
     //   indexchat['userTyping'] = response.content != '0' && response.from != this.currentUserData.ref_id;
@@ -1532,32 +1744,26 @@ class ChatComponent {
     this.changeDetector.detectChanges();
   }
   setMultiUserTyping(response, typinguser, indexchat) {
-    if (response.content == '1') {
-      indexchat['TypingUserList'] = [...new Set(typinguser)];
-    } else if (response.content == '0') {
-      indexchat['TypingUserList'] = indexchat['TypingUserList'].filter(e => e.ref_id != response.from);
+    if (response.content == "1") {
+      indexchat["TypingUserList"] = [...new Set(typinguser)];
+    } else if (response.content == "0") {
+      indexchat["TypingUserList"] = indexchat["TypingUserList"].filter(e => e.ref_id != response.from);
     }
     this.changeDetector.detectChanges();
   }
   scroll() {
     setTimeout(() => {
-      this.elRef.nativeElement.querySelector('.messagesBox').scrollTop = this.elRef.nativeElement.querySelector('.messagesBox').scrollHeight;
+      this.elRef.nativeElement.querySelector(".messagesBox").scrollTop = this.elRef.nativeElement.querySelector(".messagesBox").scrollHeight;
     }, 500);
   }
-  changeSidebar($event) {
-    this.threadType = $event;
-    if (this.threadType == 'THREAD') {
-      this.getAllGroups();
-    }
-  }
   newChat() {
-    this.threadType = 'CHAT';
+    this.threadType = "CHAT";
     this.changeDetector.detectChanges();
   }
   logout() {
     this.pubsubService.Disconnect();
     src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.clearLocalStorge();
-    this.router.navigate(['login']);
+    this.router.navigate(["login"]);
   }
   sortThread() {
     if (this.activeChat.id) {
@@ -1568,14 +1774,14 @@ class ChatComponent {
   }
   messageBy(chatthread, response) {
     if (this.isShowName(chatthread, response)) {
-      const messageByObj = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(chatthread.participants, 'ref_id', response.from);
-      response['messageBy'] = messageByObj && messageByObj.full_name || '';
+      const messageByObj = (0,src_app_shared_helpers_helpersFunctions__WEBPACK_IMPORTED_MODULE_0__.FindArrayObject)(chatthread.participants, "ref_id", response.from);
+      response["messageBy"] = messageByObj && messageByObj.full_name || "";
     }
     return response;
   }
   isShowName(chatthread, response) {
-    if (chatthread['chatHistory'].length && response.from) {
-      const previourmessage = chatthread['chatHistory'][chatthread['chatHistory'].length - 1];
+    if (chatthread["chatHistory"].length && response.from) {
+      const previourmessage = chatthread["chatHistory"][chatthread["chatHistory"].length - 1];
       return previourmessage.from != response.from;
     }
     return true;
@@ -1583,8 +1789,8 @@ class ChatComponent {
   pushMessage(thread, response) {
     let newResponse = {};
     newResponse = JSON.parse(JSON.stringify(response));
-    if (response.type == 'text' || !response.content) {
-      thread['chatHistory'].push(newResponse);
+    if (response.type == "text" || !response.content) {
+      thread["chatHistory"].push(newResponse);
     } else {
       const foundIndex = thread.chatHistory.findIndex(x => x.id == response.id);
       thread.chatHistory[foundIndex] = response;
@@ -1594,7 +1800,7 @@ class ChatComponent {
     const isactivethread = group.id == this.activeChat.id;
     if (!isactivethread && group.unReadCount) {
       return "Misread messages";
-    } else if (group.type != 'text') {
+    } else if (group.type != "text") {
       return group.type;
     }
     return group.lastMessage;
@@ -1612,10 +1818,10 @@ class ChatComponent {
     this.changeDetector.detectChanges();
   }
   isHideThread() {
-    return this.isMobile() ? this.screen != 'CHAT' : false;
+    return this.isMobile() ? this.screen != "CHAT" : false;
   }
   isHideChatScreen() {
-    return this.isMobile() ? this.screen != 'MSG' : false;
+    return this.isMobile() ? this.screen != "MSG" : false;
   }
   backScreen() {
     this.threadType = "THREAD";
@@ -1640,6 +1846,10 @@ ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["�
       let _t;
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.messageInputElement = _t.first);
     }
+  },
+  outputs: {
+    setActiveChatt: "setActiveChatt",
+    changeEvent: "changeEvent"
   },
   decls: 44,
   vars: 16,
@@ -1743,7 +1953,7 @@ ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["�
     }
   },
   dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_5__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_10__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControlName, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgModel, _angular_material_legacy_progress_spinner__WEBPACK_IMPORTED_MODULE_19__.MatLegacyProgressSpinner, _add_group_add_group_component__WEBPACK_IMPORTED_MODULE_6__.AddGroupComponent, _new_chat_new_chat_component__WEBPACK_IMPORTED_MODULE_7__.NewChatComponent, _shared_pipe_safeurl__WEBPACK_IMPORTED_MODULE_8__.SafeUrlPipe, _angular_common__WEBPACK_IMPORTED_MODULE_18__.DatePipe],
-  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.attachmentpopup[_ngcontent-%COMP%] {\n  border-radius: 20px;\n  padding: 15px 5px;\n}\n\n.msgText[_ngcontent-%COMP%] {\n  width: 100%;\n  overflow-wrap: break-word;\n  word-wrap: break-word;\n  -webkit-hyphens: auto;\n          hyphens: auto;\n  padding: 0;\n  margin: 0;\n  font-family: inter-regular;\n  font-style: normal;\n  font-weight: normal;\n  font-size: 14px;\n  line-height: 18px;\n}\n\n.thumbnail[_ngcontent-%COMP%] {\n  width: 60px !important;\n}\n\n\n.modal[_ngcontent-%COMP%] {\n  display: block; \n  position: fixed; \n  z-index: 1; \n  padding-top: 100px; \n  left: 0;\n  top: 0;\n  width: 100%; \n  height: 100%; \n  overflow: auto; \n  background-color: rgb(0, 0, 0); \n  background-color: rgba(0, 0, 0, 0.9); \n}\n\n\n.modal-content[_ngcontent-%COMP%] {\n  margin: auto;\n  display: block;\n  width: 80%;\n  max-width: 700px;\n  border-radius: 6px !important;\n}\n@keyframes _ngcontent-%COMP%_zoom {\n  from {\n    transform: scale(0);\n  }\n  to {\n    transform: scale(1);\n  }\n}\n\n.close[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 15px;\n  right: 35px;\n  color: #f1f1f1;\n  font-size: 40px;\n  font-weight: bold;\n  transition: 0.3s;\n}\n\n.close[_ngcontent-%COMP%]:hover, .close[_ngcontent-%COMP%]:focus {\n  color: #bbb;\n  text-decoration: none;\n  cursor: pointer;\n}\n\n\n@media only screen and (max-width: 700px) {\n  .modal-content[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n.editgroup[_ngcontent-%COMP%] {\n  width: 485px;\n  margin: auto;\n}\n\n.chatholder[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\n\n.online[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background-color: green;\n  border-radius: 50%;\n  display: inline-block;\n}\n\n.offline[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background: red;\n  border-radius: 50%;\n  display: inline-block;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L2NoYXQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSw2QkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGOztBQUNBO0VBQ0UsK0JBQUE7QUFFRjs7QUFDQTtFQUNFLG9DQUFBO0VBQ0EseUJBQUE7QUFFRjs7QUFDQTtFQUNFLG1CQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFDQTtFQUNFLFdBQUE7RUFDQSx5QkFBQTtFQUNBLHFCQUFBO0VBQ0EscUJBQUE7VUFBQSxhQUFBO0VBQ0EsVUFBQTtFQUNBLFNBQUE7RUFDQSwwQkFBQTtFQUNBLGtCQUFBO0VBQ0EsbUJBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFBQTtFQUNFLHNCQUFBO0FBR0Y7O0FBQUEsMkJBQUE7QUFDQTtFQUNFLGNBQUEsRUFBQSxzQkFBQTtFQUNBLGVBQUEsRUFBQSxrQkFBQTtFQUNBLFVBQUEsRUFBQSxlQUFBO0VBQ0Esa0JBQUEsRUFBQSx3QkFBQTtFQUNBLE9BQUE7RUFDQSxNQUFBO0VBQ0EsV0FBQSxFQUFBLGVBQUE7RUFDQSxZQUFBLEVBQUEsZ0JBQUE7RUFDQSxjQUFBLEVBQUEsNEJBQUE7RUFDQSw4QkFBQSxFQUFBLG1CQUFBO0VBQ0Esb0NBQUEsRUFBQSxxQkFBQTtBQUdGOztBQUFBLDBCQUFBO0FBQ0E7RUFDRSxZQUFBO0VBQ0EsY0FBQTtFQUNBLFVBQUE7RUFDQSxnQkFBQTtFQUNBLDZCQUFBO0FBR0Y7QUFTQTtFQUNFO0lBQ0UsbUJBQUE7RUFFRjtFQUFBO0lBQ0UsbUJBQUE7RUFFRjtBQUNGO0FBQ0EscUJBQUE7QUFDQTtFQUNFLGtCQUFBO0VBQ0EsU0FBQTtFQUNBLFdBQUE7RUFDQSxjQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsZ0JBQUE7QUFDRjs7QUFFQTs7RUFFRSxXQUFBO0VBQ0EscUJBQUE7RUFDQSxlQUFBO0FBQ0Y7O0FBRUEsd0NBQUE7QUFDQTtFQUNFO0lBQ0UsV0FBQTtFQUNGO0FBQ0Y7QUFFQTtFQUNFLFlBQUE7RUFDQSxZQUFBO0FBQUY7O0FBR0E7RUFDRSwyQkFBQTtBQUFGOztBQUlBO0VBQ0UsWUFBQTtFQUNBLFdBQUE7RUFDQSx1QkFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFERjs7QUFLQTtFQUNFLFlBQUE7RUFDQSxXQUFBO0VBQ0EsZUFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFGRiIsInNvdXJjZXNDb250ZW50IjpbIi5yb29tTmFtZVRleHQge1xuICBmb250LWZhbWlseTogbWFucm9wZS1zZW1pYm9sZDtcbiAgZm9udC1zaXplOiAzNHB4O1xuICBsaW5lLWhlaWdodDogMzhweDtcbiAgbGV0dGVyLXNwYWNpbmc6IC0wLjEycHg7XG4gIGNvbG9yOiAjMzEzOTRkO1xufVxuLmNoYXRidG4ge1xuICBib3JkZXItcmlnaHQ6IDFweCBzb2xpZCAjZWJlZGY0O1xufVxuXG4uYWN0aXZlIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2IwZDdkZCAhaW1wb3J0YW50O1xuICBib3JkZXI6IDFweCBzb2xpZCAjMjE5NmYzO1xufVxuXG4uYXR0YWNobWVudHBvcHVwIHtcbiAgYm9yZGVyLXJhZGl1czogMjBweDtcbiAgcGFkZGluZzogMTVweCA1cHg7XG59XG5cbi5tc2dUZXh0IHtcbiAgd2lkdGg6IDEwMCU7XG4gIG92ZXJmbG93LXdyYXA6IGJyZWFrLXdvcmQ7XG4gIHdvcmQtd3JhcDogYnJlYWstd29yZDtcbiAgaHlwaGVuczogYXV0bztcbiAgcGFkZGluZzogMDtcbiAgbWFyZ2luOiAwO1xuICBmb250LWZhbWlseTogaW50ZXItcmVndWxhcjtcbiAgZm9udC1zdHlsZTogbm9ybWFsO1xuICBmb250LXdlaWdodDogbm9ybWFsO1xuICBmb250LXNpemU6IDE0cHg7XG4gIGxpbmUtaGVpZ2h0OiAxOHB4O1xufVxuLnRodW1ibmFpbCB7XG4gIHdpZHRoOiA2MHB4ICFpbXBvcnRhbnQ7XG59XG5cbi8qIFRoZSBNb2RhbCAoYmFja2dyb3VuZCkgKi9cbi5tb2RhbCB7XG4gIGRpc3BsYXk6IGJsb2NrOyAvKiBIaWRkZW4gYnkgZGVmYXVsdCAqL1xuICBwb3NpdGlvbjogZml4ZWQ7IC8qIFN0YXkgaW4gcGxhY2UgKi9cbiAgei1pbmRleDogMTsgLyogU2l0IG9uIHRvcCAqL1xuICBwYWRkaW5nLXRvcDogMTAwcHg7IC8qIExvY2F0aW9uIG9mIHRoZSBib3ggKi9cbiAgbGVmdDogMDtcbiAgdG9wOiAwO1xuICB3aWR0aDogMTAwJTsgLyogRnVsbCB3aWR0aCAqL1xuICBoZWlnaHQ6IDEwMCU7IC8qIEZ1bGwgaGVpZ2h0ICovXG4gIG92ZXJmbG93OiBhdXRvOyAvKiBFbmFibGUgc2Nyb2xsIGlmIG5lZWRlZCAqL1xuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMCwgMCwgMCk7IC8qIEZhbGxiYWNrIGNvbG9yICovXG4gIGJhY2tncm91bmQtY29sb3I6IHJnYmEoMCwgMCwgMCwgMC45KTsgLyogQmxhY2sgdy8gb3BhY2l0eSAqL1xufVxuXG4vKiBNb2RhbCBDb250ZW50IChpbWFnZSkgKi9cbi5tb2RhbC1jb250ZW50IHtcbiAgbWFyZ2luOiBhdXRvO1xuICBkaXNwbGF5OiBibG9jaztcbiAgd2lkdGg6IDgwJTtcbiAgbWF4LXdpZHRoOiA3MDBweDtcbiAgYm9yZGVyLXJhZGl1czogNnB4ICFpbXBvcnRhbnQ7XG59XG5cbkAtd2Via2l0LWtleWZyYW1lcyB6b29tIHtcbiAgZnJvbSB7XG4gICAgLXdlYmtpdC10cmFuc2Zvcm06IHNjYWxlKDApO1xuICB9XG4gIHRvIHtcbiAgICAtd2Via2l0LXRyYW5zZm9ybTogc2NhbGUoMSk7XG4gIH1cbn1cblxuQGtleWZyYW1lcyB6b29tIHtcbiAgZnJvbSB7XG4gICAgdHJhbnNmb3JtOiBzY2FsZSgwKTtcbiAgfVxuICB0byB7XG4gICAgdHJhbnNmb3JtOiBzY2FsZSgxKTtcbiAgfVxufVxuXG4vKiBUaGUgQ2xvc2UgQnV0dG9uICovXG4uY2xvc2Uge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogMTVweDtcbiAgcmlnaHQ6IDM1cHg7XG4gIGNvbG9yOiAjZjFmMWYxO1xuICBmb250LXNpemU6IDQwcHg7XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICB0cmFuc2l0aW9uOiAwLjNzO1xufVxuXG4uY2xvc2U6aG92ZXIsXG4uY2xvc2U6Zm9jdXMge1xuICBjb2xvcjogI2JiYjtcbiAgdGV4dC1kZWNvcmF0aW9uOiBub25lO1xuICBjdXJzb3I6IHBvaW50ZXI7XG59XG5cbi8qIDEwMCUgSW1hZ2UgV2lkdGggb24gU21hbGxlciBTY3JlZW5zICovXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDcwMHB4KSB7XG4gIC5tb2RhbC1jb250ZW50IHtcbiAgICB3aWR0aDogMTAwJTtcbiAgfVxufVxuXG4uZWRpdGdyb3VwIHtcbiAgd2lkdGg6IDQ4NXB4O1xuICBtYXJnaW46IGF1dG87XG59XG5cbi5jaGF0aG9sZGVyIHtcbiAganVzdGlmeS1jb250ZW50OiBmbGV4LXN0YXJ0O1xufVxuXG5cbi5vbmxpbmUge1xuICBoZWlnaHQ6IDEwcHg7XG4gIHdpZHRoOiAxMHB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBncmVlbjtcbiAgYm9yZGVyLXJhZGl1czogNTAlO1xuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG59XG5cblxuLm9mZmxpbmUge1xuICBoZWlnaHQ6IDEwcHg7XG4gIHdpZHRoOiAxMHB4O1xuICBiYWNrZ3JvdW5kOiByZWQ7XG4gIGJvcmRlci1yYWRpdXM6IDUwJTtcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.attachmentpopup[_ngcontent-%COMP%] {\n  border-radius: 20px;\n  padding: 15px 5px;\n}\n\n.msgText[_ngcontent-%COMP%] {\n  width: 100%;\n  overflow-wrap: break-word;\n  word-wrap: break-word;\n  -webkit-hyphens: auto;\n          hyphens: auto;\n  padding: 0;\n  margin: 0;\n  font-family: inter-regular;\n  font-style: normal;\n  font-weight: normal;\n  font-size: 14px;\n  line-height: 18px;\n}\n\n.thumbnail[_ngcontent-%COMP%] {\n  width: 60px !important;\n}\n\n\n.modal[_ngcontent-%COMP%] {\n  display: block; \n  position: fixed; \n  z-index: 1; \n  padding-top: 100px; \n  left: 0;\n  top: 0;\n  width: 100%; \n  height: 100%; \n  overflow: auto; \n  background-color: rgb(0, 0, 0); \n  background-color: rgba(0, 0, 0, 0.9); \n}\n\n\n.modal-content[_ngcontent-%COMP%] {\n  margin: auto;\n  display: block;\n  width: 80%;\n  max-width: 700px;\n  border-radius: 6px !important;\n}\n@keyframes _ngcontent-%COMP%_zoom {\n  from {\n    transform: scale(0);\n  }\n  to {\n    transform: scale(1);\n  }\n}\n\n.close[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 15px;\n  right: 35px;\n  color: #f1f1f1;\n  font-size: 40px;\n  font-weight: bold;\n  transition: 0.3s;\n}\n\n.close[_ngcontent-%COMP%]:hover, .close[_ngcontent-%COMP%]:focus {\n  color: #bbb;\n  text-decoration: none;\n  cursor: pointer;\n}\n\n\n@media only screen and (max-width: 700px) {\n  .modal-content[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n.editgroup[_ngcontent-%COMP%] {\n  width: 485px;\n  margin: auto;\n}\n\n.chatholder[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\n\n.online[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background-color: green;\n  border-radius: 50%;\n  display: inline-block;\n}\n\n.offline[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background: red;\n  border-radius: 50%;\n  display: inline-block;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L2NoYXQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSw2QkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGOztBQUNBO0VBQ0UsK0JBQUE7QUFFRjs7QUFDQTtFQUNFLG9DQUFBO0VBQ0EseUJBQUE7QUFFRjs7QUFDQTtFQUNFLG1CQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFDQTtFQUNFLFdBQUE7RUFDQSx5QkFBQTtFQUNBLHFCQUFBO0VBQ0EscUJBQUE7VUFBQSxhQUFBO0VBQ0EsVUFBQTtFQUNBLFNBQUE7RUFDQSwwQkFBQTtFQUNBLGtCQUFBO0VBQ0EsbUJBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFBQTtFQUNFLHNCQUFBO0FBR0Y7O0FBQUEsMkJBQUE7QUFDQTtFQUNFLGNBQUEsRUFBQSxzQkFBQTtFQUNBLGVBQUEsRUFBQSxrQkFBQTtFQUNBLFVBQUEsRUFBQSxlQUFBO0VBQ0Esa0JBQUEsRUFBQSx3QkFBQTtFQUNBLE9BQUE7RUFDQSxNQUFBO0VBQ0EsV0FBQSxFQUFBLGVBQUE7RUFDQSxZQUFBLEVBQUEsZ0JBQUE7RUFDQSxjQUFBLEVBQUEsNEJBQUE7RUFDQSw4QkFBQSxFQUFBLG1CQUFBO0VBQ0Esb0NBQUEsRUFBQSxxQkFBQTtBQUdGOztBQUFBLDBCQUFBO0FBQ0E7RUFDRSxZQUFBO0VBQ0EsY0FBQTtFQUNBLFVBQUE7RUFDQSxnQkFBQTtFQUNBLDZCQUFBO0FBR0Y7QUFTQTtFQUNFO0lBQ0UsbUJBQUE7RUFFRjtFQUFBO0lBQ0UsbUJBQUE7RUFFRjtBQUNGO0FBQ0EscUJBQUE7QUFDQTtFQUNFLGtCQUFBO0VBQ0EsU0FBQTtFQUNBLFdBQUE7RUFDQSxjQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsZ0JBQUE7QUFDRjs7QUFFQTs7RUFFRSxXQUFBO0VBQ0EscUJBQUE7RUFDQSxlQUFBO0FBQ0Y7O0FBRUEsd0NBQUE7QUFDQTtFQUNFO0lBQ0UsV0FBQTtFQUNGO0FBQ0Y7QUFFQTtFQUNFLFlBQUE7RUFDQSxZQUFBO0FBQUY7O0FBR0E7RUFDRSwyQkFBQTtBQUFGOztBQUlBO0VBQ0UsWUFBQTtFQUNBLFdBQUE7RUFDQSx1QkFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFERjs7QUFLQTtFQUNFLFlBQUE7RUFDQSxXQUFBO0VBQ0EsZUFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFGRiIsInNvdXJjZXNDb250ZW50IjpbIi5yb29tTmFtZVRleHQge1xyXG4gIGZvbnQtZmFtaWx5OiBtYW5yb3BlLXNlbWlib2xkO1xyXG4gIGZvbnQtc2l6ZTogMzRweDtcclxuICBsaW5lLWhlaWdodDogMzhweDtcclxuICBsZXR0ZXItc3BhY2luZzogLTAuMTJweDtcclxuICBjb2xvcjogIzMxMzk0ZDtcclxufVxyXG4uY2hhdGJ0biB7XHJcbiAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgI2ViZWRmNDtcclxufVxyXG5cclxuLmFjdGl2ZSB7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2IwZDdkZCAhaW1wb3J0YW50O1xyXG4gIGJvcmRlcjogMXB4IHNvbGlkICMyMTk2ZjM7XHJcbn1cclxuXHJcbi5hdHRhY2htZW50cG9wdXAge1xyXG4gIGJvcmRlci1yYWRpdXM6IDIwcHg7XHJcbiAgcGFkZGluZzogMTVweCA1cHg7XHJcbn1cclxuXHJcbi5tc2dUZXh0IHtcclxuICB3aWR0aDogMTAwJTtcclxuICBvdmVyZmxvdy13cmFwOiBicmVhay13b3JkO1xyXG4gIHdvcmQtd3JhcDogYnJlYWstd29yZDtcclxuICBoeXBoZW5zOiBhdXRvO1xyXG4gIHBhZGRpbmc6IDA7XHJcbiAgbWFyZ2luOiAwO1xyXG4gIGZvbnQtZmFtaWx5OiBpbnRlci1yZWd1bGFyO1xyXG4gIGZvbnQtc3R5bGU6IG5vcm1hbDtcclxuICBmb250LXdlaWdodDogbm9ybWFsO1xyXG4gIGZvbnQtc2l6ZTogMTRweDtcclxuICBsaW5lLWhlaWdodDogMThweDtcclxufVxyXG4udGh1bWJuYWlsIHtcclxuICB3aWR0aDogNjBweCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG4vKiBUaGUgTW9kYWwgKGJhY2tncm91bmQpICovXHJcbi5tb2RhbCB7XHJcbiAgZGlzcGxheTogYmxvY2s7IC8qIEhpZGRlbiBieSBkZWZhdWx0ICovXHJcbiAgcG9zaXRpb246IGZpeGVkOyAvKiBTdGF5IGluIHBsYWNlICovXHJcbiAgei1pbmRleDogMTsgLyogU2l0IG9uIHRvcCAqL1xyXG4gIHBhZGRpbmctdG9wOiAxMDBweDsgLyogTG9jYXRpb24gb2YgdGhlIGJveCAqL1xyXG4gIGxlZnQ6IDA7XHJcbiAgdG9wOiAwO1xyXG4gIHdpZHRoOiAxMDAlOyAvKiBGdWxsIHdpZHRoICovXHJcbiAgaGVpZ2h0OiAxMDAlOyAvKiBGdWxsIGhlaWdodCAqL1xyXG4gIG92ZXJmbG93OiBhdXRvOyAvKiBFbmFibGUgc2Nyb2xsIGlmIG5lZWRlZCAqL1xyXG4gIGJhY2tncm91bmQtY29sb3I6IHJnYigwLCAwLCAwKTsgLyogRmFsbGJhY2sgY29sb3IgKi9cclxuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDAsIDAsIDAsIDAuOSk7IC8qIEJsYWNrIHcvIG9wYWNpdHkgKi9cclxufVxyXG5cclxuLyogTW9kYWwgQ29udGVudCAoaW1hZ2UpICovXHJcbi5tb2RhbC1jb250ZW50IHtcclxuICBtYXJnaW46IGF1dG87XHJcbiAgZGlzcGxheTogYmxvY2s7XHJcbiAgd2lkdGg6IDgwJTtcclxuICBtYXgtd2lkdGg6IDcwMHB4O1xyXG4gIGJvcmRlci1yYWRpdXM6IDZweCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG5ALXdlYmtpdC1rZXlmcmFtZXMgem9vbSB7XHJcbiAgZnJvbSB7XHJcbiAgICAtd2Via2l0LXRyYW5zZm9ybTogc2NhbGUoMCk7XHJcbiAgfVxyXG4gIHRvIHtcclxuICAgIC13ZWJraXQtdHJhbnNmb3JtOiBzY2FsZSgxKTtcclxuICB9XHJcbn1cclxuXHJcbkBrZXlmcmFtZXMgem9vbSB7XHJcbiAgZnJvbSB7XHJcbiAgICB0cmFuc2Zvcm06IHNjYWxlKDApO1xyXG4gIH1cclxuICB0byB7XHJcbiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpO1xyXG4gIH1cclxufVxyXG5cclxuLyogVGhlIENsb3NlIEJ1dHRvbiAqL1xyXG4uY2xvc2Uge1xyXG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICB0b3A6IDE1cHg7XHJcbiAgcmlnaHQ6IDM1cHg7XHJcbiAgY29sb3I6ICNmMWYxZjE7XHJcbiAgZm9udC1zaXplOiA0MHB4O1xyXG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gIHRyYW5zaXRpb246IDAuM3M7XHJcbn1cclxuXHJcbi5jbG9zZTpob3ZlcixcclxuLmNsb3NlOmZvY3VzIHtcclxuICBjb2xvcjogI2JiYjtcclxuICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XHJcbiAgY3Vyc29yOiBwb2ludGVyO1xyXG59XHJcblxyXG4vKiAxMDAlIEltYWdlIFdpZHRoIG9uIFNtYWxsZXIgU2NyZWVucyAqL1xyXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDcwMHB4KSB7XHJcbiAgLm1vZGFsLWNvbnRlbnQge1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgfVxyXG59XHJcblxyXG4uZWRpdGdyb3VwIHtcclxuICB3aWR0aDogNDg1cHg7XHJcbiAgbWFyZ2luOiBhdXRvO1xyXG59XHJcblxyXG4uY2hhdGhvbGRlciB7XHJcbiAganVzdGlmeS1jb250ZW50OiBmbGV4LXN0YXJ0O1xyXG59XHJcblxyXG5cclxuLm9ubGluZSB7XHJcbiAgaGVpZ2h0OiAxMHB4O1xyXG4gIHdpZHRoOiAxMHB4O1xyXG4gIGJhY2tncm91bmQtY29sb3I6IGdyZWVuO1xyXG4gIGJvcmRlci1yYWRpdXM6IDUwJTtcclxuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbn1cclxuXHJcblxyXG4ub2ZmbGluZSB7XHJcbiAgaGVpZ2h0OiAxMHB4O1xyXG4gIHdpZHRoOiAxMHB4O1xyXG4gIGJhY2tncm91bmQ6IHJlZDtcclxuICBib3JkZXItcmFkaXVzOiA1MCU7XHJcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
 /***/ }),
@@ -1758,19 +1968,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "NewChatComponent": () => (/* binding */ NewChatComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/internal/observable/fromEvent */ 3280);
-/* harmony import */ var rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/internal/operators/debounceTime */ 1989);
-/* harmony import */ var rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/internal/operators/distinctUntilChanged */ 8977);
-/* harmony import */ var rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/internal/operators/map */ 635);
-/* harmony import */ var rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/internal/operators/mergeMap */ 1353);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/operators */ 4874);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 745);
-/* harmony import */ var src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/shared/services/pubsub.service */ 235);
-/* harmony import */ var src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/shared/services/base.service */ 2365);
-/* harmony import */ var _angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/material/legacy-dialog */ 8446);
-/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-toastr */ 4817);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/internal/observable/fromEvent */ 3280);
+/* harmony import */ var rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/internal/operators/debounceTime */ 1989);
+/* harmony import */ var rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/internal/operators/distinctUntilChanged */ 8977);
+/* harmony import */ var rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/internal/operators/map */ 635);
+/* harmony import */ var rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/internal/operators/mergeMap */ 1353);
+/* harmony import */ var _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../shared/services/storage.service */ 1303);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/operators */ 4874);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs */ 745);
+/* harmony import */ var src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/shared/services/pubsub.service */ 235);
+/* harmony import */ var src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/base.service */ 2365);
+/* harmony import */ var _angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/material/legacy-dialog */ 8446);
+/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ngx-toastr */ 4817);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/common */ 4666);
+
 
 
 
@@ -1788,29 +2000,29 @@ __webpack_require__.r(__webpack_exports__);
 const _c0 = ["searchInput"];
 function NewChatComponent_ng_container_22_Template(rf, ctx) {
   if (rf & 1) {
-    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](1, "div", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("click", function NewChatComponent_ng_container_22_Template_div_click_1_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵrestoreView"](_r4);
+    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementContainerStart"](0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](1, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("click", function NewChatComponent_ng_container_22_Template_div_click_1_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵrestoreView"](_r4);
       const user_r2 = restoredCtx.$implicit;
-      const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵresetView"](ctx_r3.startChat(user_r2));
+      const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵresetView"](ctx_r3.startChat(user_r2, "chat"));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](2, "div", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](3, "img", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](4, "p", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](6, "div", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](7, "img", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](2, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](3, "img", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "p", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](6, "div", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](7, "img", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementContainerEnd"]();
   }
   if (rf & 2) {
     const user_r2 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtextInterpolate"](user_r2.full_name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](user_r2.full_name);
   }
 }
 class NewChatComponent {
@@ -1822,13 +2034,13 @@ class NewChatComponent {
     this.loading = true;
     this.AllUsers = [];
     this.CopyAllUsers = [];
-    this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
-    this.setActiveChat = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_3__.EventEmitter(); //<string>
+    this.setActiveChat = new _angular_core__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
   }
   ngOnInit() {}
   ngAfterViewInit() {
     if (this.searchInput) {
-      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_3__.fromEvent)(this.searchInput.nativeElement, 'input').pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_4__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_5__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_6__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.startWith)(''), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_8__.mergeMap)(value => {
+      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_4__.fromEvent)(this.searchInput.nativeElement, 'input').pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_6__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_7__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.startWith)(''), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_9__.mergeMap)(value => {
         this.loading = true;
         if (!value) {
           const data = {
@@ -1837,7 +2049,7 @@ class NewChatComponent {
             search_value: '',
             condition: "contains"
           };
-          return this.svc.post('AllUsers', data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_4__.map)(res => {
+          return this.svc.post('AllUsers', data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(res => {
             if (!(res.users && res.users.length)) {
               res.users = [];
             }
@@ -1855,7 +2067,7 @@ class NewChatComponent {
         const returnData = {
           users: filteruser
         };
-        return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(returnData);
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_10__.of)(returnData);
       })).subscribe(res => {
         this.loading = false;
         if (!res.users || !res.users.length) {
@@ -1868,19 +2080,28 @@ class NewChatComponent {
     }
   }
   backScreen() {
-    this.changeEvent.emit("THREAD");
+    console.log("backscreen - new-chat");
+    this.changeEvent.emit({
+      event: "THREAD",
+      group: {}
+    });
   }
+  //Called when "Add Group Chat" heading clicked
   addGroupEvent() {
-    this.changeEvent.emit("GROUP");
+    this.changeEvent.emit({
+      event: "GROUP",
+      group: {}
+    });
   }
-  startChat(user) {
+  startChat(user, val) {
     if (this.loading) return;
     this.loading = true;
     const data = {
-      group_title: user.full_name,
+      group_title: _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData().username + "-" + user.full_name,
       participants: [user.user_id],
       auto_created: 1
     };
+    console.log("** new group creation: ", _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData());
     this.svc.post('CreateGroup', data).subscribe(v => {
       if (v && v.status == 200) {
         const subscribedata = {
@@ -1891,7 +2112,21 @@ class NewChatComponent {
         const data = [];
         data.push(subscribedata);
         this.pubsubService.subscribeToChat(data);
-        this.changeEvent.emit("THREAD");
+        //ABM
+        const groupInfo = {
+          from: _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData().ref_id,
+          to: [user.ref_id],
+          action: "new",
+          groupModel: v
+        };
+        console.log("** notification send on group creation :\n\n", groupInfo, "\n\n\n\n", v, "\n", val);
+        this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
+        //
+        this.changeEvent.emit({
+          event: "THREAD",
+          group: v.group
+        });
+        v.group.clicked_item = val;
         this.setActiveChat.emit(v.group);
         this.loading = false;
       }
@@ -1899,18 +2134,18 @@ class NewChatComponent {
   }
 }
 NewChatComponent.ɵfac = function NewChatComponent_Factory(t) {
-  return new (t || NewChatComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_0__.PubsubService), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_1__.BaseService), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_10__.MatLegacyDialog), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](ngx_toastr__WEBPACK_IMPORTED_MODULE_11__.ToastrService));
+  return new (t || NewChatComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_1__.PubsubService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_2__.BaseService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_11__.MatLegacyDialog), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](ngx_toastr__WEBPACK_IMPORTED_MODULE_12__.ToastrService));
 };
-NewChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
+NewChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
   type: NewChatComponent,
   selectors: [["new-chat"]],
   viewQuery: function NewChatComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](_c0, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵloadQuery"]()) && (ctx.searchInput = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.searchInput = _t.first);
     }
   },
   outputs: {
@@ -1922,45 +2157,45 @@ NewChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__
   consts: [[1, "newChatHeader"], [1, "newChatLeft", "hand"], ["src", "./assets/images/arrow-left.png", 1, "arrowLeft", 3, "click"], [1, "newChatHeading"], [1, "newChatRight", "hand"], ["src", "./assets/images/checkmark.png", 1, "goodMark"], [1, "newChatSearchBox"], [1, "input-group"], [1, "input-group-prepend"], ["src", "./assets/images/search.png", 1, "seacrchIcon"], ["type", "text", "placeholder", "Search", 1, "form-control"], ["searchInput", ""], [1, "addGrpChat"], [1, "addGrpChatTop", "hand", 3, "click"], ["src", "./assets/images/Group Chat.png", 1, "addgrpIcon"], [1, "addGrpTitle"], [1, "addGrpSep"], [1, "cntct"], [1, "contactListContainer", "max-height"], [4, "ngFor", "ngForOf"], [1, "contactListCard", "hand", 3, "click"], [1, "contactListCardLeft"], ["src", "./assets/images/user.png", 1, "ListCardIcon"], [1, "ListCardName", "text-capitalize", "pb-1"], [1, "contactListCardRight", "justify-content-end", "pl-1"], ["src", "./assets/images/chat.png", 1, "pl-1", "ListCardButton", "hand"]],
   template: function NewChatComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "img", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("click", function NewChatComponent_Template_img_click_2_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "img", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("click", function NewChatComponent_Template_img_click_2_listener() {
         return ctx.backScreen();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](3, "p", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](4, "New Chat");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](5, "div", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](6, "img", 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](7, "div", 6)(8, "div", 7)(9, "div", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](10, "img", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](11, "input", 10, 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](13, "div", 12)(14, "div", 13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("click", function NewChatComponent_Template_div_click_14_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](3, "p", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](4, "New Chat");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](6, "img", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 6)(8, "div", 7)(9, "div", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](10, "img", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](11, "input", 10, 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](13, "div", 12)(14, "div", 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("click", function NewChatComponent_Template_div_click_14_listener() {
         return ctx.addGroupEvent();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](15, "img", 14);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](16, "p", 15);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](17, "Add Group Chat");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](18, "div", 16);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](19, "p", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](20, "Contacts");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](21, "div", 18);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](22, NewChatComponent_ng_container_22_Template, 8, 1, "ng-container", 19);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](15, "img", 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](16, "p", 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](17, "Add Group Chat");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](18, "div", 16);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](19, "p", 17);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](20, "Contacts");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](21, "div", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](22, NewChatComponent_ng_container_22_Template, 8, 1, "ng-container", 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](22);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ctx.AllUsers);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](22);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx.AllUsers);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgForOf],
-  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.selectuser[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n  min-width: 30px;\n  padding-right: 5px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L25ldy1jaGF0L25ldy1jaGF0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsNkJBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSx1QkFBQTtFQUNBLGNBQUE7QUFDRjs7QUFDQTtFQUNFLCtCQUFBO0FBRUY7O0FBQ0E7RUFDRSxvQ0FBQTtFQUNBLHlCQUFBO0FBRUY7O0FBQ0E7RUFDRSx5QkFBQTtFQUNBLGVBQUE7RUFDQSxrQkFBQTtBQUVGIiwic291cmNlc0NvbnRlbnQiOlsiLnJvb21OYW1lVGV4dCB7XG4gIGZvbnQtZmFtaWx5OiBtYW5yb3BlLXNlbWlib2xkO1xuICBmb250LXNpemU6IDM0cHg7XG4gIGxpbmUtaGVpZ2h0OiAzOHB4O1xuICBsZXR0ZXItc3BhY2luZzogLTAuMTJweDtcbiAgY29sb3I6ICMzMTM5NGQ7XG59XG4uY2hhdGJ0biB7XG4gIGJvcmRlci1yaWdodDogMXB4IHNvbGlkICNlYmVkZjQ7XG59XG5cbi5hY3RpdmUge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjYjBkN2RkICFpbXBvcnRhbnQ7XG4gIGJvcmRlcjogMXB4IHNvbGlkICMyMTk2ZjM7XG59XG5cbi5zZWxlY3R1c2VyIHtcbiAganVzdGlmeS1jb250ZW50OiBmbGV4LWVuZDtcbiAgbWluLXdpZHRoOiAzMHB4O1xuICBwYWRkaW5nLXJpZ2h0OiA1cHg7XG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgForOf],
+  styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.selectuser[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n  min-width: 30px;\n  padding-right: 5px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L25ldy1jaGF0L25ldy1jaGF0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsNkJBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSx1QkFBQTtFQUNBLGNBQUE7QUFDRjs7QUFDQTtFQUNFLCtCQUFBO0FBRUY7O0FBQ0E7RUFDRSxvQ0FBQTtFQUNBLHlCQUFBO0FBRUY7O0FBQ0E7RUFDRSx5QkFBQTtFQUNBLGVBQUE7RUFDQSxrQkFBQTtBQUVGIiwic291cmNlc0NvbnRlbnQiOlsiLnJvb21OYW1lVGV4dCB7XHJcbiAgZm9udC1mYW1pbHk6IG1hbnJvcGUtc2VtaWJvbGQ7XHJcbiAgZm9udC1zaXplOiAzNHB4O1xyXG4gIGxpbmUtaGVpZ2h0OiAzOHB4O1xyXG4gIGxldHRlci1zcGFjaW5nOiAtMC4xMnB4O1xyXG4gIGNvbG9yOiAjMzEzOTRkO1xyXG59XHJcbi5jaGF0YnRuIHtcclxuICBib3JkZXItcmlnaHQ6IDFweCBzb2xpZCAjZWJlZGY0O1xyXG59XHJcblxyXG4uYWN0aXZlIHtcclxuICBiYWNrZ3JvdW5kLWNvbG9yOiAjYjBkN2RkICFpbXBvcnRhbnQ7XHJcbiAgYm9yZGVyOiAxcHggc29saWQgIzIxOTZmMztcclxufVxyXG5cclxuLnNlbGVjdHVzZXIge1xyXG4gIGp1c3RpZnktY29udGVudDogZmxleC1lbmQ7XHJcbiAgbWluLXdpZHRoOiAzMHB4O1xyXG4gIHBhZGRpbmctcmlnaHQ6IDVweDtcclxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -2093,7 +2328,7 @@ LoginComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["
     }
   },
   dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_3__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_4__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_4__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_4__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_4__.FormControlName, _angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterLink],
-  styles: [".wrapperHeading[_ngcontent-%COMP%] {\n  font-family: manrope-medium;\n  font-style: normal;\n  font-weight: 500;\n  font-size: 27px;\n  line-height: 32px;\n  text-align: center;\n  letter-spacing: -0.12px;\n  color: #171725;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9sb2dpbi9sb2dpbi5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLDJCQUFBO0VBQ0Esa0JBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLGtCQUFBO0VBQ0EsdUJBQUE7RUFDQSxjQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIud3JhcHBlckhlYWRpbmcge1xuICAgIGZvbnQtZmFtaWx5OiBtYW5yb3BlLW1lZGl1bTtcbiAgICBmb250LXN0eWxlOiBub3JtYWw7XG4gICAgZm9udC13ZWlnaHQ6IDUwMDtcbiAgICBmb250LXNpemU6IDI3cHg7XG4gICAgbGluZS1oZWlnaHQ6IDMycHg7XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgIGxldHRlci1zcGFjaW5nOiAtMC4xMnB4O1xuICAgIGNvbG9yOiAjMTcxNzI1O1xufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+  styles: [".wrapperHeading[_ngcontent-%COMP%] {\n  font-family: manrope-medium;\n  font-style: normal;\n  font-weight: 500;\n  font-size: 27px;\n  line-height: 32px;\n  text-align: center;\n  letter-spacing: -0.12px;\n  color: #171725;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9sb2dpbi9sb2dpbi5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLDJCQUFBO0VBQ0Esa0JBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLGtCQUFBO0VBQ0EsdUJBQUE7RUFDQSxjQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIud3JhcHBlckhlYWRpbmcge1xyXG4gICAgZm9udC1mYW1pbHk6IG1hbnJvcGUtbWVkaXVtO1xyXG4gICAgZm9udC1zdHlsZTogbm9ybWFsO1xyXG4gICAgZm9udC13ZWlnaHQ6IDUwMDtcclxuICAgIGZvbnQtc2l6ZTogMjdweDtcclxuICAgIGxpbmUtaGVpZ2h0OiAzMnB4O1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgbGV0dGVyLXNwYWNpbmc6IC0wLjEycHg7XHJcbiAgICBjb2xvcjogIzE3MTcyNTtcclxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -2225,7 +2460,7 @@ SignUpComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__[
     }
   },
   dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_4__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.FormControlName, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterLink],
-  styles: [".wrapperHeading[_ngcontent-%COMP%] {\n  font-family: manrope-medium;\n  font-style: normal;\n  font-weight: 500;\n  font-size: 27px;\n  line-height: 32px;\n  text-align: center;\n  letter-spacing: -0.12px;\n  color: #171725;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9zaWduLXVwL3NpZ24tdXAuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSwyQkFBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGIiwic291cmNlc0NvbnRlbnQiOlsiLndyYXBwZXJIZWFkaW5nIHtcbiAgZm9udC1mYW1pbHk6IG1hbnJvcGUtbWVkaXVtO1xuICBmb250LXN0eWxlOiBub3JtYWw7XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIGZvbnQtc2l6ZTogMjdweDtcbiAgbGluZS1oZWlnaHQ6IDMycHg7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgbGV0dGVyLXNwYWNpbmc6IC0wLjEycHg7XG4gIGNvbG9yOiAjMTcxNzI1O1xufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+  styles: [".wrapperHeading[_ngcontent-%COMP%] {\n  font-family: manrope-medium;\n  font-style: normal;\n  font-weight: 500;\n  font-size: 27px;\n  line-height: 32px;\n  text-align: center;\n  letter-spacing: -0.12px;\n  color: #171725;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9zaWduLXVwL3NpZ24tdXAuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSwyQkFBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7RUFDQSxrQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGIiwic291cmNlc0NvbnRlbnQiOlsiLndyYXBwZXJIZWFkaW5nIHtcclxuICBmb250LWZhbWlseTogbWFucm9wZS1tZWRpdW07XHJcbiAgZm9udC1zdHlsZTogbm9ybWFsO1xyXG4gIGZvbnQtd2VpZ2h0OiA1MDA7XHJcbiAgZm9udC1zaXplOiAyN3B4O1xyXG4gIGxpbmUtaGVpZ2h0OiAzMnB4O1xyXG4gIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICBsZXR0ZXItc3BhY2luZzogLTAuMTJweDtcclxuICBjb2xvcjogIzE3MTcyNTtcclxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -2937,6 +3172,10 @@ class PubsubService {
   }
   readSingleMessage(chatMessages) {
     this.Client.SendReceipt(chatMessages);
+  }
+  sendNotificationOnGroupUpdation(obj) {
+    console.log("** sendNotificationOnGroupUpdation");
+    this.Client.SendNotification(obj);
   }
 }
 PubsubService.ɵfac = function PubsubService_Factory(t) {
