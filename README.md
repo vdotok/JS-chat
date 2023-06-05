@@ -4,7 +4,7 @@ This is a demo project to demonstrate “One-to-One and Group Chat” using Angu
 
 ## Live Demo
 
-Click <a href="https://chat.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok JS One-to-One and Group Chat.
+Click <a target="_blank" href="https://chat.vdotok.com" title="Chat Demo">here</a> to visit the live demo of VdoTok JS One-to-One and Group Chat.
 
 ## Prerequisites:
 
