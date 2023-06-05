@@ -1,3 +1,4 @@
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 # Vdotok JS One-to-One and Group Chat
 
 This is a demo project to demonstrate “One-to-One and Group Chat” using Angular 9+.
