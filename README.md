@@ -22,10 +22,6 @@ We recommend <a href="https://github.com/nvm-sh/nvm" target="_blank">nvm </a> fo
 
 <br/>
 
-## Sign up to get credentials i.e Project ID, Authentication Token.
-
-Register at <a href="https://userpanel.vdotok.com/norgic/chatSDK" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
-
 ## Setting up the local environment
 
 To install Angular on your local system, you need the following:
@@ -47,7 +43,7 @@ You can use the Angular CLI to create projects, generate application and library
 > To install the Angular CLI, open a terminal window (ctrl + shift + c) and run the following command:
 
 ```shell
-   npm install –g @angular/cli
+   npm install -g @angular/cli
 ```
 
 Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Setup</a> for more information.
@@ -60,46 +56,55 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
 
 ```shell
     git clone https://github.com/vdotok/JS-chat.git
-    cd my-proj
 ```
 
-Register at <a href="https://userpanel.vdotok.com/overview" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
+- Move from you current directory i-e, **my-proj** to the **JS-chat** directory.
 
-1. Click on this link -> https://vdotok.com/ in Chrome.
+```shell
+    cd JS-chat
+```
 
-![My Remote Image](https://user-images.githubusercontent.com/87179594/184070841-f9b91f46-93df-4047-acfb-4739fd207aaa.jpg)
+## Sign up to get credentials i.e Project ID, Authentication Token.
+
+Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
+
+1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
+
+<img width="1721" alt="SignupVdotok" src="https://github-production-user-asset-6210df.s3.amazonaws.com/134290022/243338361-a0755787-a956-4fa1-b270-e0b2fc21ad9b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230605%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230605T112306Z&X-Amz-Expires=300&X-Amz-Signature=19870413d03f6d32efbd8be4d43f952b619ad03ad1fe0caabe731c0fc82901d2&X-Amz-SignedHeaders=host&actor_id=134290022&key_id=0&repo_id=380253458">
+
 
 2. This will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
 
-3. After successfully sign up User navigates to the main dashboad of VDOTOK. Where user can find the ProjectID and Api Key.
+3. After successfully sign up, user navigates to the main dashboad of VDOTOK where the user can find the ProjectID, and Api Key.
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
-After successful registration, you can update the existing projectID with your own projectID, Which you will recieve in the response of register request.
-
-#### After successful registration, you can update the existing projectID with your own projectID.
+After successful registration, you can update the existing projectID with your own projectID, given in point no. 2 in the above attached screenshot
 
 <br/>
 
 ## Add PROJECT ID and AUTHENTICATION Token.
 
-- For messaging in chat application, You can update the projectID by following these steps. ( JS-CHAT -> src -> app -> shared -> services -> pubsub.service.ts ).
+</br>
 
-You have to Update Project_id at the Login and Signup request by following these steps.
+### For messaging in chat application, You can update the projectID by following these steps.
 
-- At Login request. ( JS-CHAT -> src -> app -> components -> login -> login.component.ts )
-- At Signup request. ( JS-CHAT -> src -> app -> components -> sign-up -> sign-up.component.ts )
+- Go to the file ( JS-CHAT -> src -> constants -> const.ts ).
 
-After replacing the projectID at all the above places, compile and run the project.
+- Replace the **project_id** constant with your project ID.
+
 
 ### Base URL
 
-You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl** by following these steps.
+You have to update BaseUrl with your own apiBaseUrl. You can update **apiBaseUrl** by following these steps:
 
-- In environment.prod.ts File, ( JS-CHAT -> src -> environments -> environment.prod.ts )
-- In environment.ts File, ( JS-CHAT -> src -> environments -> environment.ts )
+- Go to environment.prod.ts file, ( JS-CHAT -> src -> environments -> environment.prod.ts ), replace the **apiBaseUrl** with your BaseUrl
+
+- Go to environment.ts file, ( JS-CHAT -> src -> environments -> environment.ts ), replace the **apiBaseUrl** with your BaseUrl
+
+</br>
 
 ## Install npm packages
 
@@ -116,12 +121,17 @@ Please refer to the above-stated npm and nvm version notes.
 
 - Create **New Account** using Sign-up Form, and use the application
 
-### How to Generate and Install Build:
+
+
+## How to Generate and Install Build:
 
 Follow the commands below to generate a “build”
 
 ```shell
   ng build
+```
+
+```shell
   ng build --aot --configuration production --build-optimizer --outputHashing=all
 ```
 
@@ -143,10 +153,14 @@ const Client = new MVDOTOK.Client({
     });
 ```
 
-After Successful configuation, you can run the projcet locally by using this command.
+After successful configuration, you can run the project locally by using this command.
 
 ```shell
-    npm start or
+    npm start 
+```
+or use the following command to run the project locally
+
+```shell
     ng serve
 ```
 

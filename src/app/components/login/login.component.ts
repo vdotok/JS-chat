@@ -3,7 +3,8 @@ import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms'
 import { Router } from "@angular/router";
 import { StorageService } from 'src/app/shared/services/storage.service';
 import FormsHandler from '../../shared/FormsHandler/FormsHandler';
-import { AuthService } from '../../shared/auth/auth.service';
+import { AuthService } from '../../shared/auth/auth.service'; 
+import { project_id } from 'src/constants/const';
 
 @Component({
   selector: 'ngx-login',
@@ -45,7 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     FormsHandler.validateForm(this.loginForm);
     if (this.loginForm.invalid) return;
     const saveData = this.loginForm.value;
-    saveData.project_id = '1RN1RP';
+    saveData.project_id = project_id; //'1RN1RP';
     this.loading = true;
     this.formError = null;
     this.auth.login(saveData).subscribe(v => {
