@@ -1,4 +1,3 @@
-<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 # Vdotok JS One-to-One and Group Chat
 
 This is a demo project to demonstrate “One-to-One and Group Chat” using Angular 9+.
@@ -71,7 +70,7 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Aut
 
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
-<img width="1721" alt="SignupVdotok" src="https://github-production-user-asset-6210df.s3.amazonaws.com/134290022/243338361-a0755787-a956-4fa1-b270-e0b2fc21ad9b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230605%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230605T112306Z&X-Amz-Expires=300&X-Amz-Signature=19870413d03f6d32efbd8be4d43f952b619ad03ad1fe0caabe731c0fc82901d2&X-Amz-SignedHeaders=host&actor_id=134290022&key_id=0&repo_id=380253458">
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 
 
 2. This will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
