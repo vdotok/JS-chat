@@ -64,6 +64,8 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
     cd JS-chat
 ```
 
+</br>
+
 ## Sign up to get credentials i.e Project ID, Authentication Token.
 
 Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
@@ -113,14 +115,19 @@ Please refer to the above-stated npm and nvm version notes.
 
 ```shell
   npm install
+```
+
+- Now run the following command to run the project
+
+```shell
   ng serve
 ```
 
-- Open browser, application is running at **http://localhost:4200**
+- Open your browser, your application is running at **http://localhost:4200**
 
 - Create **New Account** using Sign-up Form, and use the application
 
-
+</br>
 
 ## How to Generate and Install Build:
 
@@ -133,6 +140,8 @@ Follow the commands below to generate a “build”
 ```shell
   ng build --aot --configuration production --build-optimizer --outputHashing=all
 ```
+
+</br>
 
 ### How to Configure SDK:
 
