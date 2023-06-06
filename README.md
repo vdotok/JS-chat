@@ -73,7 +73,7 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Aut
 <img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 
 
-2. This will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
+2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
 
