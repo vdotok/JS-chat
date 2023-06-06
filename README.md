@@ -4,7 +4,7 @@ This is a demo project to demonstrate “One-to-One and Group Chat” using Angu
 
 ## Live Demo
 
-Click <a href="https://chat.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok JS One-to-One and Group Chat.
+Click [here](https://chat.vdotok.com) here to visit the live demo of VdoTok JS One-to-One and Group Chat.
 
 ## Prerequisites:
 
@@ -142,7 +142,7 @@ Add SDK into your **index.html** file. Declare a variable for your component or 
 
 User provides config to initiate the SDK
 
-```shell
+```js
 const Client = new MVDOTOK.Client({
       projectID: "****",
       secret: "********************",
