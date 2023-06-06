@@ -83,11 +83,10 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Aut
 
 After successful registration, you can update the existing projectID with your own projectID, given in point no. 2 in the above attached screenshot
 
-<br/>
+</br>
 
 ## Add PROJECT ID and AUTHENTICATION Token.
 
-</br>
 
 ### For messaging in chat application, You can update the projectID by following these steps.
 
