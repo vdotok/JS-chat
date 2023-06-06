@@ -42,7 +42,7 @@ You can use the Angular CLI to create projects, generate application and library
 
 > To install the Angular CLI, open a terminal window (ctrl + shift + c) and run the following command:
 
-```shell
+```js
    npm install -g @angular/cli
 ```
 
