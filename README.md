@@ -4,7 +4,7 @@ This is a demo project to demonstrate “One-to-One and Group Chat” using Angu
 
 ## Live Demo
 
-Click <a href="https://chat.vdotok.com" target="_blank" title="Chat Demo">here</a> to visit the live demo of VdoTok JS One-to-One and Group Chat.
+Click [here](https://chat.vdotok.com) here to visit the live demo of VdoTok JS One-to-One and Group Chat.
 
 ## Prerequisites:
 
@@ -64,16 +64,18 @@ Visit <a href="https://angular.io/guide/setup-local" target="_blank">Angular Set
     cd JS-chat
 ```
 
+</br>
+
 ## Sign up to get credentials i.e Project ID, Authentication Token.
 
 Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Authentication Token** and **Project ID**.
 
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
-<img width="1721" alt="SignupVdotok" src="https://github-production-user-asset-6210df.s3.amazonaws.com/134290022/243338361-a0755787-a956-4fa1-b270-e0b2fc21ad9b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230605%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230605T112306Z&X-Amz-Expires=300&X-Amz-Signature=19870413d03f6d32efbd8be4d43f952b619ad03ad1fe0caabe731c0fc82901d2&X-Amz-SignedHeaders=host&actor_id=134290022&key_id=0&repo_id=380253458">
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 
 
-2. This will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
+2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
 
@@ -83,11 +85,10 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **Aut
 
 After successful registration, you can update the existing projectID with your own projectID, given in point no. 2 in the above attached screenshot
 
-<br/>
+</br>
 
 ## Add PROJECT ID and AUTHENTICATION Token.
 
-</br>
 
 ### For messaging in chat application, You can update the projectID by following these steps.
 
@@ -114,14 +115,19 @@ Please refer to the above-stated npm and nvm version notes.
 
 ```shell
   npm install
+```
+
+- Now run the following command to run the project
+
+```shell
   ng serve
 ```
 
-- Open browser, application is running at **http://localhost:4200**
+- Open your browser, your application is running at **http://localhost:4200**
 
 - Create **New Account** using Sign-up Form, and use the application
 
-
+</br>
 
 ## How to Generate and Install Build:
 
@@ -135,6 +141,8 @@ Follow the commands below to generate a “build”
   ng build --aot --configuration production --build-optimizer --outputHashing=all
 ```
 
+</br>
+
 ### How to Configure SDK:
 
 Add SDK into your **index.html** file. Declare a variable for your component or service:
@@ -142,7 +150,7 @@ Add SDK into your **index.html** file. Declare a variable for your component or 
 
 User provides config to initiate the SDK
 
-```shell
+```js
 const Client = new MVDOTOK.Client({
       projectID: "****",
       secret: "********************",
