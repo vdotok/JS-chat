@@ -98,23 +98,43 @@
             <!-- first messgae from same person -->
             <div class="bubbleContainer">
 
+              <!-- FOR TEXT MSG -->
               <div class="bubble" *ngIf="chat.type ==='text'">
                 <p class="msgText">{{chat.content}}</p>
               </div>
 
-              <div class="imgbubble" *ngIf="chat.type ==='image'">
-                <mat-spinner [diameter]="30" *ngIf="!chat.content"></mat-spinner>
-                <img [src]="chat.content | safeUrl" class="w-100 msgImage img-thumbnail img-fluid"
-                  (click)="openImage(chat.content)" />
+
+
+
+            
+
+
+
+
+              <div *ngIf="!chat.content && chat.type ==='ftp'" >
+                <mat-spinner [diameter]="50" *ngIf="!chat.content"></mat-spinner>
               </div>
 
-              <div class="imgbubble file-attachment" *ngIf="chat.type !=='text' && chat.type !=='image'">
-                <mat-spinner [diameter]="30" *ngIf="!chat.content"></mat-spinner>
+
+
+              <div *ngIf="chat.type !=='text' && chat.type ==='ftp'" class="imgbubble file-attachment" >
+                <mat-spinner [diameter]="50" *ngIf="!chat.content"></mat-spinner>
                 <ng-container *ngIf="chat.content">
                   <img [src]="checkFileType(chat.content)" class="w-100 msgImage thumbnail img-fluid" />
                   <a [href]="chat.content | safeUrl" download>Download</a>
                 </ng-container>
               </div>
+
+
+
+
+
+
+
+
+
+
+
 
               <span class="time">
                 <ng-container *ngIf="chat.readCount && chat.from == currentUserName">

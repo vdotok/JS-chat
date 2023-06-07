@@ -48,6 +48,7 @@ export class AddGroupComponent implements OnInit {
   dialogRef;
   selectedUsers = [];
   CopyAllUsers = [];
+  u_users = [];
   @ViewChild("searchInput") searchInput: ElementRef;
   @Output() setActiveChat = new EventEmitter<string>();
 
@@ -94,12 +95,18 @@ export class AddGroupComponent implements OnInit {
                 search_value: "",
                 condition: "contains",
               };
+
               return this.svc.post("AllUsers", data).pipe(
                 map((res) => {
-                  if (!(res.users && res.users.length)) {
-                    res.users = [];
+                  console.log("**** Res of All users (group chat):\n\n", res);
+                  this.u_users = res.users.filter(
+                    (u) => u.ref_id !== StorageService.getUserData().ref_id
+                  );
+
+                  if (!(this.u_users && this.u_users.length)) {
+                    this.u_users = [];
                   }
-                  this.CopyAllUsers = [...res.users];
+                  this.CopyAllUsers = [...this.u_users];
                   return res;
                 })
               );
@@ -119,11 +126,14 @@ export class AddGroupComponent implements OnInit {
         )
         .subscribe((res) => {
           this.loading = false;
-          if (!res.users || !res.users.length) {
+          this.u_users = res.users.filter(
+            (u) => u.ref_id !== StorageService.getUserData().ref_id
+          );
+          if (!this.u_users || !this.u_users.length) {
             this.toastr.error("Opps!", "No contacts found");
             this.AllUsers = [];
           } else {
-            this.AllUsers = res.users;
+            this.AllUsers = this.u_users;
           }
           this.setAlreadySelected();
         });
@@ -184,7 +194,7 @@ export class AddGroupComponent implements OnInit {
         this.selectedUsers = [];
         this.changeDetector.detectChanges();
         this.loading = false;
-        this.changeEvent.emit({event: "THREAD", group: v.group});
+        this.changeEvent.emit({ event: "THREAD", group: v.group });
       });
     } else {
       this.addGroupModel = true;
@@ -228,7 +238,7 @@ export class AddGroupComponent implements OnInit {
         this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
 
         //
-        this.changeEvent.emit({event: "THREAD", group: v.group}); //added this because after creating m2m group, no group list is showing
+        this.changeEvent.emit({ event: "THREAD", group: v.group }); //added this because after creating m2m group, no group list is showing
         //
         this.groupnameError = "";
         this.setActiveChat.emit(v.group);
@@ -246,14 +256,13 @@ export class AddGroupComponent implements OnInit {
     this.selectedUsers = [];
     this.addGroupModel = false;
     this.AllUsers.forEach((element) => (element["selected"] = false));
-    this.changeEvent.emit({event: "THREAD", group:{}});
+    this.changeEvent.emit({ event: "THREAD", group: {} });
     this.changeDetector.detectChanges();
   }
 
   backScreen() {
     console.log("backScreen  - addp-group");
 
-
-    this.changeEvent.emit({event: "CHAT", group:{}});
+    this.changeEvent.emit({ event: "CHAT", group: {} });
   }
 }

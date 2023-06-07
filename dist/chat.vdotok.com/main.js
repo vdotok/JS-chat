@@ -346,6 +346,7 @@ class AddGroupComponent {
     this.groupnameError = "";
     this.selectedUsers = [];
     this.CopyAllUsers = [];
+    this.u_users = [];
     this.setActiveChat = new _angular_core__WEBPACK_IMPORTED_MODULE_5__.EventEmitter();
   }
   ngOnInit() {
@@ -372,10 +373,12 @@ class AddGroupComponent {
             condition: "contains"
           };
           return this.svc.post("AllUsers", data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_8__.map)(res => {
-            if (!(res.users && res.users.length)) {
-              res.users = [];
+            console.log("**** Res of All users (group chat):\n\n", res);
+            this.u_users = res.users.filter(u => u.ref_id !== src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData().ref_id);
+            if (!(this.u_users && this.u_users.length)) {
+              this.u_users = [];
             }
-            this.CopyAllUsers = [...res.users];
+            this.CopyAllUsers = [...this.u_users];
             return res;
           }));
         }
@@ -392,11 +395,12 @@ class AddGroupComponent {
         return (0,rxjs__WEBPACK_IMPORTED_MODULE_13__.of)(returnData);
       })).subscribe(res => {
         this.loading = false;
-        if (!res.users || !res.users.length) {
+        this.u_users = res.users.filter(u => u.ref_id !== src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getUserData().ref_id);
+        if (!this.u_users || !this.u_users.length) {
           this.toastr.error("Opps!", "No contacts found");
           this.AllUsers = [];
         } else {
-          this.AllUsers = res.users;
+          this.AllUsers = this.u_users;
         }
         this.setAlreadySelected();
       });
@@ -622,17 +626,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/shared/services/storage.service */ 1303);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 2508);
 /* harmony import */ var src_app_shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/FormsHandler/FormsHandler */ 7724);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! axios */ 2111);
 /* harmony import */ var src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/shared/services/pubsub.service */ 235);
 /* harmony import */ var src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/shared/services/base.service */ 2365);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var _angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/material/legacy-dialog */ 8446);
-/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ngx-toastr */ 4817);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/legacy-dialog */ 8446);
+/* harmony import */ var ngx_toastr__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ngx-toastr */ 4817);
 /* harmony import */ var _shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../shared/FormsHandler/get-errors.component */ 8967);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/common */ 4666);
-/* harmony import */ var _angular_material_legacy_progress_spinner__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/material/legacy-progress-spinner */ 7578);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var _angular_material_legacy_progress_spinner__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/material/legacy-progress-spinner */ 7578);
 /* harmony import */ var _add_group_add_group_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./add-group/add-group.component */ 4718);
 /* harmony import */ var _new_chat_new_chat_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./new-chat/new-chat.component */ 5844);
 /* harmony import */ var _shared_pipe_safeurl__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../shared/pipe/safeurl */ 3686);
+
 
 
 
@@ -880,7 +886,7 @@ function ChatComponent_p_18_Template(rf, ctx) {
 }
 function ChatComponent_ng_container_20_ng_container_1_h4_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "h4", 74);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "h4", 73);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
@@ -892,7 +898,7 @@ function ChatComponent_ng_container_20_ng_container_1_h4_2_Template(rf, ctx) {
 }
 function ChatComponent_ng_container_20_ng_container_1_div_4_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 75)(1, "p", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 74)(1, "p", 75);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
   }
@@ -904,48 +910,37 @@ function ChatComponent_ng_container_20_ng_container_1_div_4_Template(rf, ctx) {
 }
 function ChatComponent_ng_container_20_ng_container_1_div_5_mat_spinner_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "mat-spinner", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "mat-spinner", 77);
   }
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("diameter", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("diameter", 50);
   }
 }
 function ChatComponent_ng_container_20_ng_container_1_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    const _r51 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 77);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](1, ChatComponent_ng_container_20_ng_container_1_div_5_mat_spinner_1_Template, 1, 1, "mat-spinner", 78);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "img", 79);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_ng_container_20_ng_container_1_div_5_Template_img_click_2_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r51);
-      const chat_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]().$implicit;
-      const ctx_r49 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r49.openImage(chat_r40.content));
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipe"](3, "safeUrl");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](1, ChatComponent_ng_container_20_ng_container_1_div_5_mat_spinner_1_Template, 1, 1, "mat-spinner", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
     const chat_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]().$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", !chat_r40.content);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("src", _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipeBind1"](3, 2, chat_r40.content), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsanitizeUrl"]);
   }
 }
 function ChatComponent_ng_container_20_ng_container_1_div_6_mat_spinner_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "mat-spinner", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "mat-spinner", 77);
   }
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("diameter", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("diameter", 50);
   }
 }
 function ChatComponent_ng_container_20_ng_container_1_div_6_ng_container_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "img", 82);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "a", 83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "img", 79);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "a", 80);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipe"](3, "safeUrl");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](4, "Download");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
@@ -953,17 +948,17 @@ function ChatComponent_ng_container_20_ng_container_1_div_6_ng_container_2_Templ
   }
   if (rf & 2) {
     const chat_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2).$implicit;
-    const ctx_r54 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2);
+    const ctx_r51 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("src", ctx_r54.checkFileType(chat_r40.content), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("src", ctx_r51.checkFileType(chat_r40.content), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("href", _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipeBind1"](3, 2, chat_r40.content), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsanitizeUrl"]);
   }
 }
 function ChatComponent_ng_container_20_ng_container_1_div_6_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 81);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](1, ChatComponent_ng_container_20_ng_container_1_div_6_mat_spinner_1_Template, 1, 1, "mat-spinner", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](1, ChatComponent_ng_container_20_ng_container_1_div_6_mat_spinner_1_Template, 1, 1, "mat-spinner", 76);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](2, ChatComponent_ng_container_20_ng_container_1_div_6_ng_container_2_Template, 5, 4, "ng-container", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
@@ -990,9 +985,9 @@ function ChatComponent_ng_container_20_ng_container_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](2, ChatComponent_ng_container_20_ng_container_1_h4_2_Template, 2, 1, "h4", 68);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "div", 69);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](4, ChatComponent_ng_container_20_ng_container_1_div_4_Template, 3, 1, "div", 70);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](5, ChatComponent_ng_container_20_ng_container_1_div_5_Template, 4, 4, "div", 71);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](6, ChatComponent_ng_container_20_ng_container_1_div_6_Template, 3, 2, "div", 72);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "span", 73);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](5, ChatComponent_ng_container_20_ng_container_1_div_5_Template, 2, 1, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](6, ChatComponent_ng_container_20_ng_container_1_div_6_Template, 3, 2, "div", 71);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "span", 72);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](8, ChatComponent_ng_container_20_ng_container_1_ng_container_8_Template, 3, 0, "ng-container", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](9, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](10);
@@ -1010,9 +1005,9 @@ function ChatComponent_ng_container_20_ng_container_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", chat_r40.type === "text");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", chat_r40.type === "image");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", !chat_r40.content && chat_r40.type === "ftp");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", chat_r40.type !== "text" && chat_r40.type !== "image");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", chat_r40.type !== "text" && chat_r40.type === "ftp");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", chat_r40.readCount && chat_r40.from == ctx_r39.currentUserName);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
@@ -1033,28 +1028,28 @@ function ChatComponent_ng_container_20_Template(rf, ctx) {
 }
 function ChatComponent_div_21_Template(rf, ctx) {
   if (rf & 1) {
-    const _r58 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 84)(1, "div", 85)(2, "div", 86)(3, "div", 87);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](4, "div")(5, "img", 88);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](6, "div", 89)(7, "p", 90);
+    const _r55 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 81)(1, "div", 82)(2, "div", 83)(3, "div", 84);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](4, "div")(5, "img", 85);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](6, "div", 86)(7, "p", 87);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](8, "No Conversation Yet");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](9, "p", 91);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](9, "p", 88);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](10, " Tap and hold on any message to star it, so you can easily find it later. ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](11, "div", 92)(12, "button", 93);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](11, "div", 89)(12, "button", 90);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_div_21_Template_button_click_12_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r58);
-      const ctx_r57 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r57.newChat());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r55);
+      const ctx_r54 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r54.newChat());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](13, " NEW CHAT ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "button", 94);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "button", 91);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_div_21_Template_button_click_14_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r58);
-      const ctx_r59 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r59.getAllGroups());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r55);
+      const ctx_r56 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r56.getAllGroups());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](15, " REFRESH ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()()();
@@ -1062,18 +1057,18 @@ function ChatComponent_div_21_Template(rf, ctx) {
 }
 function ChatComponent_ng_container_24_Template(rf, ctx) {
   if (rf & 1) {
-    const _r61 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    const _r58 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div", 95);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "img", 96);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "span", 97);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div", 92);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "img", 93);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "span", 94);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "span", 98);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "span", 95);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_ng_container_24_Template_span_click_5_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r61);
-      const ctx_r60 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r60.removeAttachment());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r58);
+      const ctx_r57 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r57.removeAttachment());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](6, "X");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
@@ -1087,16 +1082,16 @@ function ChatComponent_ng_container_24_Template(rf, ctx) {
 }
 function ChatComponent_input_25_Template(rf, ctx) {
   if (rf & 1) {
-    const _r64 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "input", 99, 100);
+    const _r61 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "input", 96, 97);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("keyup", function ChatComponent_input_25_Template_input_keyup_0_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r64);
-      const ctx_r63 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r63.typingmessage($event));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r61);
+      const ctx_r60 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r60.typingmessage($event));
     })("ngModelChange", function ChatComponent_input_25_Template_input_ngModelChange_0_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r64);
-      const ctx_r65 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r65.message = $event);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r61);
+      const ctx_r62 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r62.message = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
@@ -1107,16 +1102,16 @@ function ChatComponent_input_25_Template(rf, ctx) {
 }
 function ChatComponent_div_42_Template(rf, ctx) {
   if (rf & 1) {
-    const _r67 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 101)(1, "span", 102);
+    const _r64 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 98)(1, "span", 99);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_div_42_Template_span_click_1_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r67);
-      const ctx_r66 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r66.closeImage());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r64);
+      const ctx_r63 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r63.closeImage());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2, "\u00D7");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](3, "img", 103);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](3, "img", 100);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipe"](4, "safeUrl");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
@@ -1128,33 +1123,33 @@ function ChatComponent_div_42_Template(rf, ctx) {
 }
 function ChatComponent_div_43_Template(rf, ctx) {
   if (rf & 1) {
-    const _r69 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 101)(1, "div", 104)(2, "div", 105)(3, "div", 106)(4, "p", 107);
+    const _r66 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 98)(1, "div", 101)(2, "div", 102)(3, "div", 103)(4, "p", 104);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](5, "Edit group ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](6, "img", 108);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](6, "img", 105);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_div_43_Template_img_click_6_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r69);
-      const ctx_r68 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r68.closeModal());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r66);
+      const ctx_r65 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r65.closeModal());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "div", 109)(8, "form", 110);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "div", 106)(8, "form", 107);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function ChatComponent_div_43_Template_form_submit_8_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r69);
-      const ctx_r70 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r70.editGroup());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r66);
+      const ctx_r67 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r67.editGroup());
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](9, "p", 111);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](9, "p", 108);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](10, "Name your group ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](11, "input", 112)(12, "form-errors", 113);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](11, "input", 109)(12, "form-errors", 110);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](13, "button", 114);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](13, "button", 111);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_div_43_Template_button_click_13_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r69);
-      const ctx_r71 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r71.editGroup());
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r66);
+      const ctx_r68 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r68.editGroup());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](14, " DONE ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()();
@@ -1243,13 +1238,13 @@ class ChatComponent {
       this.setOnlineStatusforSubscribe(response);
     });
     this.pubsubService.Client.on("message", response => {
-      console.log("*** on-message response: \n\n", response);
       response = JSON.parse(JSON.stringify(response));
+      console.log("*** on-message response: \n\n", response);
       //console.trace("new message", response);
       if (response.data) {
         this.updateGroup(response);
       }
-      if (response.type == "text" || response.type == "file" || response.type == "image" || response.type == "audio" || response.type == "video") {
+      if (response.type == "text" || response.type == "ftp" || response.type == "file" || response.type == "image" || response.type == "audio" || response.type == "video") {
         this.scroll();
         const chatthread = this.findChatThread(response.to);
         const isActiveThread = chatthread.id == this.activeChat.id;
@@ -1268,7 +1263,9 @@ class ChatComponent {
           });
         }, 500);
         this.changeDetector.detectChanges();
-      } else if (response.type == "typing") {
+      }
+      //---------------------------------//
+      else if (response.type == "typing") {
         this.setUserTyping(response);
       } else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
@@ -1282,17 +1279,19 @@ class ChatComponent {
       }
     });
     if (this.messageInputElement) {
-      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_11__.fromEvent)(this.messageInputElement.nativeElement, "input").pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_12__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_13__.debounceTime)(3000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_14__.distinctUntilChanged)()).subscribe(data => {
+      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_11__.fromEvent)(this.messageInputElement.nativeElement, "input").pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_12__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_13__.debounceTime)(800),
+      //3000 => changed this because 0 for typing goes after some seconds to the receiver
+      (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_14__.distinctUntilChanged)()).subscribe(data => {
         const sendMessage = {
+          type: "typing",
+          content: "0",
+          to: this.activeChat.channel_name,
+          key: this.activeChat.channel_key,
           status: 0,
           size: 0,
-          type: "typing",
           isGroupMessage: false,
           from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
-          content: "0",
           id: new Date().getTime().toString(),
-          key: this.activeChat.channel_key,
-          to: this.activeChat.channel_name,
           date: new Date().getTime()
         };
         this.pubsubService.sendMessage(sendMessage);
@@ -1433,7 +1432,7 @@ class ChatComponent {
         };
         this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
         //ABM
-        //this.getAllGroups(); //commented because all groups updated and chat removed 
+        //this.getAllGroups(); //commented because all groups updated and chat removed
         this.activeChat = {};
         this.loading = false;
         this.toastr.success("The group has been deleted!", "Success!");
@@ -1552,7 +1551,7 @@ class ChatComponent {
     this.readsendMessage(group.chatHistory);
     this.changeDetector.detectChanges();
   }
-  //Called when group created: 
+  //Called when group created:
   setchat(chat) {
     console.log("**** aaaa - setChat: ", chat);
     this.setToActive = chat.id; //chat.id
@@ -1595,8 +1594,8 @@ class ChatComponent {
   readsendMessage(chatHistory) {
     const unreadchatHistory = chatHistory.filter(chat => !chat.isRead).map(chat => {
       const chatobj = {
-        messageId: chat.id,
         receiptType: 3,
+        messageId: chat.id,
         from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
         key: chat.key,
         to: chat.to,
@@ -1620,6 +1619,8 @@ class ChatComponent {
     this.fileToSend = null;
   }
   getFileType(fileR) {
+    console.log("*** file type", fileR);
+    return;
     let type = "file";
     const filetype = fileR.type;
     if (filetype.includes("image")) type = "image";else if (filetype.includes("audio")) type = "audio";else if (filetype.includes("video")) type = "video";
@@ -1639,30 +1640,48 @@ class ChatComponent {
     this.scroll();
     if (!this.message && !this.fileToSend) return;
     if (this.fileToSend) {
-      const option = {
-        id: new Date().getTime().toString(),
-        from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
-        topic: this.activeChat.channel_name,
-        to: this.activeChat.channel_name,
-        key: this.activeChat.channel_key,
-        type: this.getFileType(this.fileToSend),
-        date: new Date().getTime()
-      };
-      this.pubsubService.Client.SendFile(this.fileToSend, option);
+      //------- Changing File Sharing Procedure -------//
+      let formData = new FormData(); // Currently empty
+      formData.append("type", "ftp");
+      formData.append("uploadFile", this.fileToSend);
+      formData.append("auth_token", this.currentUserData.auth_token);
+      formData.append("request_type", "web");
+      axios__WEBPACK_IMPORTED_MODULE_15__["default"].post(`https://q-tenant.vdotok.dev/s3upload/`, formData).then(response => {
+        if (response.data.status === 200) {
+          const option = {
+            type: "ftp",
+            content: response.data.file_name,
+            to: this.activeChat.channel_name,
+            key: this.activeChat.channel_key,
+            subType: 0,
+            id: new Date().getTime().toString(),
+            from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
+            topic: this.activeChat.channel_name,
+            date: new Date().getTime(),
+            status: 1
+          };
+          console.log("**** ffffff file sharing:  ", option, this.fileToSend);
+          this.pubsubService.sendMessage(option);
+        }
+      });
       this.fileToSend = null;
+      //------- Changing File Sharing Procedure -------//
+      return;
+      // this.pubsubService.Client.SendFile(this.fileToSend, option);
     }
+
     if (!this.message) return;
     const sendMessage = {
+      type: "text",
+      content: this.message,
+      to: this.activeChat.channel_name,
+      key: this.activeChat.channel_key,
       status: 1,
       size: 0,
-      type: "text",
       isGroupMessage: false,
       from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
-      content: this.message,
       id: new Date().getTime().toString(),
-      date: new Date().getTime(),
-      key: this.activeChat.channel_key,
-      to: this.activeChat.channel_name
+      date: new Date().getTime()
     };
     this.pubsubService.sendMessage(sendMessage);
     this.message = "";
@@ -1677,15 +1696,15 @@ class ChatComponent {
       return;
     }
     const sendMessage = {
+      type: "typing",
+      content: "1",
+      to: this.activeChat.channel_name,
+      key: this.activeChat.channel_key,
       status: 0,
       size: 0,
-      type: "typing",
       isGroupMessage: false,
       from: src_app_shared_services_storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService.getAuthUsername(),
-      content: "1",
       id: new Date().getTime().toString(),
-      key: this.activeChat.channel_key,
-      to: this.activeChat.channel_name,
       date: new Date().getTime()
     };
     this.pubsubService.sendMessage(sendMessage);
@@ -1789,7 +1808,8 @@ class ChatComponent {
   pushMessage(thread, response) {
     let newResponse = {};
     newResponse = JSON.parse(JSON.stringify(response));
-    if (response.type == "text" || !response.content) {
+    if (response.type == "text" || response.content) {
+      //!response.content
       thread["chatHistory"].push(newResponse);
     } else {
       const foundIndex = thread.chatHistory.findIndex(x => x.id == response.id);
@@ -1800,9 +1820,13 @@ class ChatComponent {
     const isactivethread = group.id == this.activeChat.id;
     if (!isactivethread && group.unReadCount) {
       return "Misread messages";
-    } else if (group.type != "text") {
-      return group.type;
+    } else if (group.type === "ftp") {
+      return "File";
     }
+    //Commented due to change of file sharing method ftp:=
+    // else if (group.type != "text") {
+    //   return group.type;
+    // }
     return group.lastMessage;
   }
   openImage(imagesrc) {
@@ -1833,7 +1857,7 @@ class ChatComponent {
   }
 }
 ChatComponent.ɵfac = function ChatComponent_Factory(t) {
-  return new (t || ChatComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_3__.PubsubService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_4__.BaseService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_15__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.ElementRef), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_16__.MatLegacyDialog), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](ngx_toastr__WEBPACK_IMPORTED_MODULE_17__.ToastrService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectorRef), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormBuilder));
+  return new (t || ChatComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](src_app_shared_services_pubsub_service__WEBPACK_IMPORTED_MODULE_3__.PubsubService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](src_app_shared_services_base_service__WEBPACK_IMPORTED_MODULE_4__.BaseService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_16__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.ElementRef), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_material_legacy_dialog__WEBPACK_IMPORTED_MODULE_17__.MatLegacyDialog), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](ngx_toastr__WEBPACK_IMPORTED_MODULE_18__.ToastrService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectorRef), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormBuilder));
 };
 ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
   type: ChatComponent,
@@ -1853,10 +1877,10 @@ ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["�
   },
   decls: 44,
   vars: 16,
-  consts: [[1, "row", "dashboardContainer"], [1, "col-sm-4", "leftSide", 3, "hidden"], [1, "leftSideHeader"], ["src", "./assets/images/logo2.png", 1, "dashboardLogo"], [1, "leftSideListContainer"], [4, "ngIf"], [1, "leftSideFooter"], [1, "logoutContainer", 3, "click"], ["src", "./assets/images/log-out.png", 1, "logoutLogo"], [1, "logoutText"], [1, "ml-1", 3, "ngClass"], [1, "col-sm-8", "rightSide", 3, "hidden"], [1, "rightSideHeader", "alignBottom", "chatholder"], [2, "display", "flex", "flex-direction", "row", "align-items", "center"], ["src", "./assets/images/arrow-left.png", "class", "arrowLeft hand", 3, "click", 4, "ngIf"], ["class", "roomNameText text-capitalize", 4, "ngIf"], [1, "messagesBox"], ["class", "chatRoomContainer", 4, "ngIf"], [1, "sendInputContainer", 3, "hidden"], [1, "sendInputWrapper"], ["type", "text", "class", "form-control", "placeholder", "Type to reply..", 3, "ngModel", "keyup", "ngModelChange", 4, "ngIf"], [1, "sendInputButtonContainer", "dropup", 2, "border-right", "1px solid #ebedf4"], ["src", "./assets/images/attachment.png", "data-toggle", "dropdown", 1, "sendIcon", "dropdown-toggle"], [1, "attachmentpopup", "dropdown-menu", "dropdown-menu-right", "selectOptionContainer"], [1, "attachmentPopHeader", "mx-3"], [1, "attachmentHeading"], [1, "attachmentPopContent", 3, "click"], [1, "attachmentTool"], [1, "attachmentToolIcon"], ["src", "./assets/images/Document.png", 1, "attachmentItemIcon"], ["type", "file", "id", "fileinput", 1, "d-none", 3, "change"], ["fileuploader", ""], [1, "sendInputButtonContainer", 3, "click"], ["src", "./assets/images/send.png", 1, "sendIcon"], ["id", "myModal", "class", "modal", 4, "ngIf"], [1, "leftSectionHeader", 2, "align-items", "center", "margin", "0px"], [1, "leftHeading"], [1, "createText", 3, "click"], ["class", "leftSectionEmptyContainer", 4, "ngIf"], [1, "listingContainer", "fullHeight"], [1, "chatListContainer", "noHorizontalPadding"], [4, "ngFor", "ngForOf"], [1, "leftSectionEmptyContainer"], [1, "noAvailableText"], [1, "tapText"], [1, "chatsCardContainer", "hand", 3, "click"], [1, "chatsCardLeft"], [1, "chatsNameWrap"], [1, "chatName", "text-capitalize"], ["class", "unreadBadge", 4, "ngIf"], ["class", "misreadMsg", 4, "ngIf"], ["class", "misreadMsg text-capitalize", 3, "ngClass", 4, "ngIf"], [1, "chatsCardRight", "mr-1"], [1, "dropdown", "mt-1", 2, "align-self", "flex-end"], ["src", "./assets/images/more.png", 1, "moreIcon"], [1, "dropdown-content"], [1, "edit", 3, "click"], [1, "delete", 3, "click"], [3, "ngClass", 4, "ngIf"], ["class", "cardOnlineStatus", 4, "ngIf"], [1, "unreadBadge"], [1, "misreadMsg"], [1, "misreadMsg", "text-capitalize", 3, "ngClass"], [3, "ngClass"], [1, "cardOnlineStatus"], [3, "setActiveChat", "changeEvent"], ["src", "./assets/images/arrow-left.png", 1, "arrowLeft", "hand", 3, "click"], [1, "roomNameText", "text-capitalize"], ["class", "msgBy text-capitalize", 4, "ngIf"], [1, "bubbleContainer"], ["class", "bubble", 4, "ngIf"], ["class", "imgbubble", 4, "ngIf"], ["class", "imgbubble file-attachment", 4, "ngIf"], [1, "time"], [1, "msgBy", "text-capitalize"], [1, "bubble"], [1, "msgText"], [1, "imgbubble"], [3, "diameter", 4, "ngIf"], [1, "w-100", "msgImage", "img-thumbnail", "img-fluid", 3, "src", "click"], [3, "diameter"], [1, "imgbubble", "file-attachment"], [1, "w-100", "msgImage", "thumbnail", "img-fluid", 3, "src"], ["download", "", 3, "href"], [1, "chatRoomContainer"], [1, "listingContainer", 2, "height", "100%"], [1, "emptyListContainer"], [1, "emptyListTop"], ["src", "./assets/images/shipping.png", 1, "shippingIcon"], [1, "noConvoTextWrapper"], [1, "noConvoText"], [1, "noConvoSub", 2, "max-width", "200px"], [1, "emptyListBottom"], ["type", "submit", 1, "btn", "newChatButton", 3, "click"], ["type", "submit", 1, "btn", "refreshButton", 3, "click"], [1, "w-100"], ["src", "./assets/images/Document.png", 1, "attachmentItemIcon", "ml-4"], [1, "ml-2"], [1, "font-weight-bolder", "hand", "ml-2", "text-danger", 3, "click"], ["type", "text", "placeholder", "Type to reply..", 1, "form-control", 3, "ngModel", "keyup", "ngModelChange"], ["messageInputElement", ""], ["id", "myModal", 1, "modal"], [1, "close", 3, "click"], ["id", "img01", 1, "modal-content", 3, "src"], [1, "createChatPopup"], [1, "chatPopupContent", "groupPopup"], [1, "modalHeader"], [1, "modalHeading"], ["src", "./assets/images/cross.png", 1, "modalCross", "hand", 3, "click"], [1, "modalContent"], [1, "w-100", 3, "formGroup", "submit"], [1, "modalContentHeading"], ["type", "text", "placeholder", "ex: Deeper team", "formControlName", "group_title", 1, "form-control"], [3, "control"], ["type", "submit", 1, "btn", "doneButton", "mt-3", 3, "disabled", "click"]],
+  consts: [[1, "row", "dashboardContainer"], [1, "col-sm-4", "leftSide", 3, "hidden"], [1, "leftSideHeader"], ["src", "./assets/images/logo2.png", 1, "dashboardLogo"], [1, "leftSideListContainer"], [4, "ngIf"], [1, "leftSideFooter"], [1, "logoutContainer", 3, "click"], ["src", "./assets/images/log-out.png", 1, "logoutLogo"], [1, "logoutText"], [1, "ml-1", 3, "ngClass"], [1, "col-sm-8", "rightSide", 3, "hidden"], [1, "rightSideHeader", "alignBottom", "chatholder"], [2, "display", "flex", "flex-direction", "row", "align-items", "center"], ["src", "./assets/images/arrow-left.png", "class", "arrowLeft hand", 3, "click", 4, "ngIf"], ["class", "roomNameText text-capitalize", 4, "ngIf"], [1, "messagesBox"], ["class", "chatRoomContainer", 4, "ngIf"], [1, "sendInputContainer", 3, "hidden"], [1, "sendInputWrapper"], ["type", "text", "class", "form-control", "placeholder", "Type to reply..", 3, "ngModel", "keyup", "ngModelChange", 4, "ngIf"], [1, "sendInputButtonContainer", "dropup", 2, "border-right", "1px solid #ebedf4"], ["src", "./assets/images/attachment.png", "data-toggle", "dropdown", 1, "sendIcon", "dropdown-toggle"], [1, "attachmentpopup", "dropdown-menu", "dropdown-menu-right", "selectOptionContainer"], [1, "attachmentPopHeader", "mx-3"], [1, "attachmentHeading"], [1, "attachmentPopContent", 3, "click"], [1, "attachmentTool"], [1, "attachmentToolIcon"], ["src", "./assets/images/Document.png", 1, "attachmentItemIcon"], ["type", "file", "id", "fileinput", 1, "d-none", 3, "change"], ["fileuploader", ""], [1, "sendInputButtonContainer", 3, "click"], ["src", "./assets/images/send.png", 1, "sendIcon"], ["id", "myModal", "class", "modal", 4, "ngIf"], [1, "leftSectionHeader", 2, "align-items", "center", "margin", "0px"], [1, "leftHeading"], [1, "createText", 3, "click"], ["class", "leftSectionEmptyContainer", 4, "ngIf"], [1, "listingContainer", "fullHeight"], [1, "chatListContainer", "noHorizontalPadding"], [4, "ngFor", "ngForOf"], [1, "leftSectionEmptyContainer"], [1, "noAvailableText"], [1, "tapText"], [1, "chatsCardContainer", "hand", 3, "click"], [1, "chatsCardLeft"], [1, "chatsNameWrap"], [1, "chatName", "text-capitalize"], ["class", "unreadBadge", 4, "ngIf"], ["class", "misreadMsg", 4, "ngIf"], ["class", "misreadMsg text-capitalize", 3, "ngClass", 4, "ngIf"], [1, "chatsCardRight", "mr-1"], [1, "dropdown", "mt-1", 2, "align-self", "flex-end"], ["src", "./assets/images/more.png", 1, "moreIcon"], [1, "dropdown-content"], [1, "edit", 3, "click"], [1, "delete", 3, "click"], [3, "ngClass", 4, "ngIf"], ["class", "cardOnlineStatus", 4, "ngIf"], [1, "unreadBadge"], [1, "misreadMsg"], [1, "misreadMsg", "text-capitalize", 3, "ngClass"], [3, "ngClass"], [1, "cardOnlineStatus"], [3, "setActiveChat", "changeEvent"], ["src", "./assets/images/arrow-left.png", 1, "arrowLeft", "hand", 3, "click"], [1, "roomNameText", "text-capitalize"], ["class", "msgBy text-capitalize", 4, "ngIf"], [1, "bubbleContainer"], ["class", "bubble", 4, "ngIf"], ["class", "imgbubble file-attachment", 4, "ngIf"], [1, "time"], [1, "msgBy", "text-capitalize"], [1, "bubble"], [1, "msgText"], [3, "diameter", 4, "ngIf"], [3, "diameter"], [1, "imgbubble", "file-attachment"], [1, "w-100", "msgImage", "thumbnail", "img-fluid", 3, "src"], ["download", "", 3, "href"], [1, "chatRoomContainer"], [1, "listingContainer", 2, "height", "100%"], [1, "emptyListContainer"], [1, "emptyListTop"], ["src", "./assets/images/shipping.png", 1, "shippingIcon"], [1, "noConvoTextWrapper"], [1, "noConvoText"], [1, "noConvoSub", 2, "max-width", "200px"], [1, "emptyListBottom"], ["type", "submit", 1, "btn", "newChatButton", 3, "click"], ["type", "submit", 1, "btn", "refreshButton", 3, "click"], [1, "w-100"], ["src", "./assets/images/Document.png", 1, "attachmentItemIcon", "ml-4"], [1, "ml-2"], [1, "font-weight-bolder", "hand", "ml-2", "text-danger", 3, "click"], ["type", "text", "placeholder", "Type to reply..", 1, "form-control", 3, "ngModel", "keyup", "ngModelChange"], ["messageInputElement", ""], ["id", "myModal", 1, "modal"], [1, "close", 3, "click"], ["id", "img01", 1, "modal-content", 3, "src"], [1, "createChatPopup"], [1, "chatPopupContent", "groupPopup"], [1, "modalHeader"], [1, "modalHeading"], ["src", "./assets/images/cross.png", 1, "modalCross", "hand", 3, "click"], [1, "modalContent"], [1, "w-100", 3, "formGroup", "submit"], [1, "modalContentHeading"], ["type", "text", "placeholder", "ex: Deeper team", "formControlName", "group_title", 1, "form-control"], [3, "control"], ["type", "submit", 1, "btn", "doneButton", "mt-3", 3, "disabled", "click"]],
   template: function ChatComponent_Template(rf, ctx) {
     if (rf & 1) {
-      const _r72 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+      const _r69 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](3, "img", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
@@ -1896,7 +1920,7 @@ ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["�
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](34, "div", 26);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function ChatComponent_Template_div_click_34_listener() {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r72);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r69);
         const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵreference"](39);
         return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](_r9.click());
       });
@@ -1952,7 +1976,7 @@ ChatComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["�
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", ctx.editGroupModel);
     }
   },
-  dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_5__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_10__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControlName, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_18__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgModel, _angular_material_legacy_progress_spinner__WEBPACK_IMPORTED_MODULE_19__.MatLegacyProgressSpinner, _add_group_add_group_component__WEBPACK_IMPORTED_MODULE_6__.AddGroupComponent, _new_chat_new_chat_component__WEBPACK_IMPORTED_MODULE_7__.NewChatComponent, _shared_pipe_safeurl__WEBPACK_IMPORTED_MODULE_8__.SafeUrlPipe, _angular_common__WEBPACK_IMPORTED_MODULE_18__.DatePipe],
+  dependencies: [_shared_FormsHandler_get_errors_component__WEBPACK_IMPORTED_MODULE_5__.GetErrorsComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_10__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormGroupDirective, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormControlName, _angular_common__WEBPACK_IMPORTED_MODULE_19__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_19__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_19__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgModel, _angular_material_legacy_progress_spinner__WEBPACK_IMPORTED_MODULE_20__.MatLegacyProgressSpinner, _add_group_add_group_component__WEBPACK_IMPORTED_MODULE_6__.AddGroupComponent, _new_chat_new_chat_component__WEBPACK_IMPORTED_MODULE_7__.NewChatComponent, _shared_pipe_safeurl__WEBPACK_IMPORTED_MODULE_8__.SafeUrlPipe, _angular_common__WEBPACK_IMPORTED_MODULE_19__.DatePipe],
   styles: [".roomNameText[_ngcontent-%COMP%] {\n  font-family: manrope-semibold;\n  font-size: 34px;\n  line-height: 38px;\n  letter-spacing: -0.12px;\n  color: #31394d;\n}\n\n.chatbtn[_ngcontent-%COMP%] {\n  border-right: 1px solid #ebedf4;\n}\n\n.active[_ngcontent-%COMP%] {\n  background-color: #b0d7dd !important;\n  border: 1px solid #2196f3;\n}\n\n.attachmentpopup[_ngcontent-%COMP%] {\n  border-radius: 20px;\n  padding: 15px 5px;\n}\n\n.msgText[_ngcontent-%COMP%] {\n  width: 100%;\n  overflow-wrap: break-word;\n  word-wrap: break-word;\n  -webkit-hyphens: auto;\n          hyphens: auto;\n  padding: 0;\n  margin: 0;\n  font-family: inter-regular;\n  font-style: normal;\n  font-weight: normal;\n  font-size: 14px;\n  line-height: 18px;\n}\n\n.thumbnail[_ngcontent-%COMP%] {\n  width: 60px !important;\n}\n\n\n.modal[_ngcontent-%COMP%] {\n  display: block; \n  position: fixed; \n  z-index: 1; \n  padding-top: 100px; \n  left: 0;\n  top: 0;\n  width: 100%; \n  height: 100%; \n  overflow: auto; \n  background-color: rgb(0, 0, 0); \n  background-color: rgba(0, 0, 0, 0.9); \n}\n\n\n.modal-content[_ngcontent-%COMP%] {\n  margin: auto;\n  display: block;\n  width: 80%;\n  max-width: 700px;\n  border-radius: 6px !important;\n}\n@keyframes _ngcontent-%COMP%_zoom {\n  from {\n    transform: scale(0);\n  }\n  to {\n    transform: scale(1);\n  }\n}\n\n.close[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 15px;\n  right: 35px;\n  color: #f1f1f1;\n  font-size: 40px;\n  font-weight: bold;\n  transition: 0.3s;\n}\n\n.close[_ngcontent-%COMP%]:hover, .close[_ngcontent-%COMP%]:focus {\n  color: #bbb;\n  text-decoration: none;\n  cursor: pointer;\n}\n\n\n@media only screen and (max-width: 700px) {\n  .modal-content[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n.editgroup[_ngcontent-%COMP%] {\n  width: 485px;\n  margin: auto;\n}\n\n.chatholder[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\n\n.online[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background-color: green;\n  border-radius: 50%;\n  display: inline-block;\n}\n\n.offline[_ngcontent-%COMP%] {\n  height: 10px;\n  width: 10px;\n  background: red;\n  border-radius: 50%;\n  display: inline-block;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9jaGF0L2NoYXQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSw2QkFBQTtFQUNBLGVBQUE7RUFDQSxpQkFBQTtFQUNBLHVCQUFBO0VBQ0EsY0FBQTtBQUNGOztBQUNBO0VBQ0UsK0JBQUE7QUFFRjs7QUFDQTtFQUNFLG9DQUFBO0VBQ0EseUJBQUE7QUFFRjs7QUFDQTtFQUNFLG1CQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFDQTtFQUNFLFdBQUE7RUFDQSx5QkFBQTtFQUNBLHFCQUFBO0VBQ0EscUJBQUE7VUFBQSxhQUFBO0VBQ0EsVUFBQTtFQUNBLFNBQUE7RUFDQSwwQkFBQTtFQUNBLGtCQUFBO0VBQ0EsbUJBQUE7RUFDQSxlQUFBO0VBQ0EsaUJBQUE7QUFFRjs7QUFBQTtFQUNFLHNCQUFBO0FBR0Y7O0FBQUEsMkJBQUE7QUFDQTtFQUNFLGNBQUEsRUFBQSxzQkFBQTtFQUNBLGVBQUEsRUFBQSxrQkFBQTtFQUNBLFVBQUEsRUFBQSxlQUFBO0VBQ0Esa0JBQUEsRUFBQSx3QkFBQTtFQUNBLE9BQUE7RUFDQSxNQUFBO0VBQ0EsV0FBQSxFQUFBLGVBQUE7RUFDQSxZQUFBLEVBQUEsZ0JBQUE7RUFDQSxjQUFBLEVBQUEsNEJBQUE7RUFDQSw4QkFBQSxFQUFBLG1CQUFBO0VBQ0Esb0NBQUEsRUFBQSxxQkFBQTtBQUdGOztBQUFBLDBCQUFBO0FBQ0E7RUFDRSxZQUFBO0VBQ0EsY0FBQTtFQUNBLFVBQUE7RUFDQSxnQkFBQTtFQUNBLDZCQUFBO0FBR0Y7QUFTQTtFQUNFO0lBQ0UsbUJBQUE7RUFFRjtFQUFBO0lBQ0UsbUJBQUE7RUFFRjtBQUNGO0FBQ0EscUJBQUE7QUFDQTtFQUNFLGtCQUFBO0VBQ0EsU0FBQTtFQUNBLFdBQUE7RUFDQSxjQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0VBQ0EsZ0JBQUE7QUFDRjs7QUFFQTs7RUFFRSxXQUFBO0VBQ0EscUJBQUE7RUFDQSxlQUFBO0FBQ0Y7O0FBRUEsd0NBQUE7QUFDQTtFQUNFO0lBQ0UsV0FBQTtFQUNGO0FBQ0Y7QUFFQTtFQUNFLFlBQUE7RUFDQSxZQUFBO0FBQUY7O0FBR0E7RUFDRSwyQkFBQTtBQUFGOztBQUlBO0VBQ0UsWUFBQTtFQUNBLFdBQUE7RUFDQSx1QkFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFERjs7QUFLQTtFQUNFLFlBQUE7RUFDQSxXQUFBO0VBQ0EsZUFBQTtFQUNBLGtCQUFBO0VBQ0EscUJBQUE7QUFGRiIsInNvdXJjZXNDb250ZW50IjpbIi5yb29tTmFtZVRleHQge1xyXG4gIGZvbnQtZmFtaWx5OiBtYW5yb3BlLXNlbWlib2xkO1xyXG4gIGZvbnQtc2l6ZTogMzRweDtcclxuICBsaW5lLWhlaWdodDogMzhweDtcclxuICBsZXR0ZXItc3BhY2luZzogLTAuMTJweDtcclxuICBjb2xvcjogIzMxMzk0ZDtcclxufVxyXG4uY2hhdGJ0biB7XHJcbiAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgI2ViZWRmNDtcclxufVxyXG5cclxuLmFjdGl2ZSB7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2IwZDdkZCAhaW1wb3J0YW50O1xyXG4gIGJvcmRlcjogMXB4IHNvbGlkICMyMTk2ZjM7XHJcbn1cclxuXHJcbi5hdHRhY2htZW50cG9wdXAge1xyXG4gIGJvcmRlci1yYWRpdXM6IDIwcHg7XHJcbiAgcGFkZGluZzogMTVweCA1cHg7XHJcbn1cclxuXHJcbi5tc2dUZXh0IHtcclxuICB3aWR0aDogMTAwJTtcclxuICBvdmVyZmxvdy13cmFwOiBicmVhay13b3JkO1xyXG4gIHdvcmQtd3JhcDogYnJlYWstd29yZDtcclxuICBoeXBoZW5zOiBhdXRvO1xyXG4gIHBhZGRpbmc6IDA7XHJcbiAgbWFyZ2luOiAwO1xyXG4gIGZvbnQtZmFtaWx5OiBpbnRlci1yZWd1bGFyO1xyXG4gIGZvbnQtc3R5bGU6IG5vcm1hbDtcclxuICBmb250LXdlaWdodDogbm9ybWFsO1xyXG4gIGZvbnQtc2l6ZTogMTRweDtcclxuICBsaW5lLWhlaWdodDogMThweDtcclxufVxyXG4udGh1bWJuYWlsIHtcclxuICB3aWR0aDogNjBweCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG4vKiBUaGUgTW9kYWwgKGJhY2tncm91bmQpICovXHJcbi5tb2RhbCB7XHJcbiAgZGlzcGxheTogYmxvY2s7IC8qIEhpZGRlbiBieSBkZWZhdWx0ICovXHJcbiAgcG9zaXRpb246IGZpeGVkOyAvKiBTdGF5IGluIHBsYWNlICovXHJcbiAgei1pbmRleDogMTsgLyogU2l0IG9uIHRvcCAqL1xyXG4gIHBhZGRpbmctdG9wOiAxMDBweDsgLyogTG9jYXRpb24gb2YgdGhlIGJveCAqL1xyXG4gIGxlZnQ6IDA7XHJcbiAgdG9wOiAwO1xyXG4gIHdpZHRoOiAxMDAlOyAvKiBGdWxsIHdpZHRoICovXHJcbiAgaGVpZ2h0OiAxMDAlOyAvKiBGdWxsIGhlaWdodCAqL1xyXG4gIG92ZXJmbG93OiBhdXRvOyAvKiBFbmFibGUgc2Nyb2xsIGlmIG5lZWRlZCAqL1xyXG4gIGJhY2tncm91bmQtY29sb3I6IHJnYigwLCAwLCAwKTsgLyogRmFsbGJhY2sgY29sb3IgKi9cclxuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDAsIDAsIDAsIDAuOSk7IC8qIEJsYWNrIHcvIG9wYWNpdHkgKi9cclxufVxyXG5cclxuLyogTW9kYWwgQ29udGVudCAoaW1hZ2UpICovXHJcbi5tb2RhbC1jb250ZW50IHtcclxuICBtYXJnaW46IGF1dG87XHJcbiAgZGlzcGxheTogYmxvY2s7XHJcbiAgd2lkdGg6IDgwJTtcclxuICBtYXgtd2lkdGg6IDcwMHB4O1xyXG4gIGJvcmRlci1yYWRpdXM6IDZweCAhaW1wb3J0YW50O1xyXG59XHJcblxyXG5ALXdlYmtpdC1rZXlmcmFtZXMgem9vbSB7XHJcbiAgZnJvbSB7XHJcbiAgICAtd2Via2l0LXRyYW5zZm9ybTogc2NhbGUoMCk7XHJcbiAgfVxyXG4gIHRvIHtcclxuICAgIC13ZWJraXQtdHJhbnNmb3JtOiBzY2FsZSgxKTtcclxuICB9XHJcbn1cclxuXHJcbkBrZXlmcmFtZXMgem9vbSB7XHJcbiAgZnJvbSB7XHJcbiAgICB0cmFuc2Zvcm06IHNjYWxlKDApO1xyXG4gIH1cclxuICB0byB7XHJcbiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpO1xyXG4gIH1cclxufVxyXG5cclxuLyogVGhlIENsb3NlIEJ1dHRvbiAqL1xyXG4uY2xvc2Uge1xyXG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICB0b3A6IDE1cHg7XHJcbiAgcmlnaHQ6IDM1cHg7XHJcbiAgY29sb3I6ICNmMWYxZjE7XHJcbiAgZm9udC1zaXplOiA0MHB4O1xyXG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gIHRyYW5zaXRpb246IDAuM3M7XHJcbn1cclxuXHJcbi5jbG9zZTpob3ZlcixcclxuLmNsb3NlOmZvY3VzIHtcclxuICBjb2xvcjogI2JiYjtcclxuICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XHJcbiAgY3Vyc29yOiBwb2ludGVyO1xyXG59XHJcblxyXG4vKiAxMDAlIEltYWdlIFdpZHRoIG9uIFNtYWxsZXIgU2NyZWVucyAqL1xyXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDcwMHB4KSB7XHJcbiAgLm1vZGFsLWNvbnRlbnQge1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgfVxyXG59XHJcblxyXG4uZWRpdGdyb3VwIHtcclxuICB3aWR0aDogNDg1cHg7XHJcbiAgbWFyZ2luOiBhdXRvO1xyXG59XHJcblxyXG4uY2hhdGhvbGRlciB7XHJcbiAganVzdGlmeS1jb250ZW50OiBmbGV4LXN0YXJ0O1xyXG59XHJcblxyXG5cclxuLm9ubGluZSB7XHJcbiAgaGVpZ2h0OiAxMHB4O1xyXG4gIHdpZHRoOiAxMHB4O1xyXG4gIGJhY2tncm91bmQtY29sb3I6IGdyZWVuO1xyXG4gIGJvcmRlci1yYWRpdXM6IDUwJTtcclxuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbn1cclxuXHJcblxyXG4ub2ZmbGluZSB7XHJcbiAgaGVpZ2h0OiAxMHB4O1xyXG4gIHdpZHRoOiAxMHB4O1xyXG4gIGJhY2tncm91bmQ6IHJlZDtcclxuICBib3JkZXItcmFkaXVzOiA1MCU7XHJcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -2034,26 +2058,29 @@ class NewChatComponent {
     this.loading = true;
     this.AllUsers = [];
     this.CopyAllUsers = [];
+    this.u_users = [];
     this.changeEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_3__.EventEmitter(); //<string>
     this.setActiveChat = new _angular_core__WEBPACK_IMPORTED_MODULE_3__.EventEmitter();
   }
   ngOnInit() {}
   ngAfterViewInit() {
     if (this.searchInput) {
-      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_4__.fromEvent)(this.searchInput.nativeElement, 'input').pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_6__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_7__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.startWith)(''), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_9__.mergeMap)(value => {
+      (0,rxjs_internal_observable_fromEvent__WEBPACK_IMPORTED_MODULE_4__.fromEvent)(this.searchInput.nativeElement, "input").pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(event => event.target.value), (0,rxjs_internal_operators_debounceTime__WEBPACK_IMPORTED_MODULE_6__.debounceTime)(1000), (0,rxjs_internal_operators_distinctUntilChanged__WEBPACK_IMPORTED_MODULE_7__.distinctUntilChanged)(), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.startWith)(""), (0,rxjs_internal_operators_mergeMap__WEBPACK_IMPORTED_MODULE_9__.mergeMap)(value => {
         this.loading = true;
         if (!value) {
           const data = {
             sorting: "ORDER BY full_name ASC",
             search_field: "full_name",
-            search_value: '',
+            search_value: "",
             condition: "contains"
           };
-          return this.svc.post('AllUsers', data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(res => {
-            if (!(res.users && res.users.length)) {
-              res.users = [];
+          return this.svc.post("AllUsers", data).pipe((0,rxjs_internal_operators_map__WEBPACK_IMPORTED_MODULE_5__.map)(res => {
+            this.u_users = res.users.filter(u => u.ref_id !== _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData().ref_id);
+            console.log("**** Res of All users (single chat):\n\n", res, this.u_users);
+            if (!(this.u_users && this.u_users.length)) {
+              this.u_users = [];
             }
-            this.CopyAllUsers = [...res.users];
+            this.CopyAllUsers = [...this.u_users];
             return res;
           }));
         }
@@ -2070,11 +2097,12 @@ class NewChatComponent {
         return (0,rxjs__WEBPACK_IMPORTED_MODULE_10__.of)(returnData);
       })).subscribe(res => {
         this.loading = false;
-        if (!res.users || !res.users.length) {
+        this.u_users = res.users.filter(u => u.ref_id !== _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData().ref_id);
+        if (!this.u_users || !this.u_users.length) {
           this.toastr.error("No contacts found", "Opps!");
           this.AllUsers = [];
         } else {
-          this.AllUsers = res.users;
+          this.AllUsers = this.u_users;
         }
       });
     }
@@ -2102,12 +2130,12 @@ class NewChatComponent {
       auto_created: 1
     };
     console.log("** new group creation: ", _shared_services_storage_service__WEBPACK_IMPORTED_MODULE_0__.StorageService.getUserData());
-    this.svc.post('CreateGroup', data).subscribe(v => {
+    this.svc.post("CreateGroup", data).subscribe(v => {
       if (v && v.status == 200) {
         const subscribedata = {
           ...v.group,
-          key: v.group['channel_key'],
-          channel: v.group['channel_name']
+          key: v.group["channel_key"],
+          channel: v.group["channel_name"]
         };
         const data = [];
         data.push(subscribedata);

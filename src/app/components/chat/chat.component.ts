@@ -31,6 +31,7 @@ import {
   receiptModel,
   typingModel,
 } from "src/app/shared/models/chat";
+import axios from "axios";
 
 @Component({
   selector: "chat",
@@ -92,8 +93,6 @@ export class ChatComponent implements OnInit {
     this.pubsubService.Client.on("register", (response) => {
       console.log("*** on-register response:\n", response);
     });
-    
-
     this.pubsubService.Client.on("disconnect", (response) => {
       console.log("disconnect", response);
       this.sdkconnected = false;
@@ -107,7 +106,6 @@ export class ChatComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-
     this.pubsubService.Client.on("authentication_error", (res: any) => {
       console.log("authentication_error", res);
     });
@@ -128,21 +126,25 @@ export class ChatComponent implements OnInit {
     });
 
     this.pubsubService.Client.on("message", (response) => {
-      console.log("*** on-message response: \n\n", response);
       response = JSON.parse(JSON.stringify(response));
+      console.log("*** on-message response: \n\n", response);
+
       //console.trace("new message", response);
       if (response.data) {
         this.updateGroup(response);
       }
       if (
         response.type == "text" ||
+        response.type == "ftp" ||
         response.type == "file" ||
         response.type == "image" ||
         response.type == "audio" ||
         response.type == "video"
       ) {
         this.scroll();
+
         const chatthread = this.findChatThread(response.to);
+
         const isActiveThread = chatthread.id == this.activeChat.id;
         chatthread["unReadCount"] = isActiveThread
           ? 0
@@ -160,8 +162,12 @@ export class ChatComponent implements OnInit {
             return a.id == chatthread.id ? -1 : 1;
           });
         }, 500);
+
         this.changeDetector.detectChanges();
-      } else if (response.type == "typing") {
+      }
+
+      //---------------------------------//
+      else if (response.type == "typing") {
         this.setUserTyping(response);
       } else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
@@ -183,20 +189,20 @@ export class ChatComponent implements OnInit {
       fromEvent(this.messageInputElement.nativeElement, "input")
         .pipe(
           map((event: Event) => (event.target as HTMLInputElement).value),
-          debounceTime(3000),
+          debounceTime(800), //3000 => changed this because 0 for typing goes after some seconds to the receiver
           distinctUntilChanged()
         )
         .subscribe((data) => {
           const sendMessage: MessageModel = {
+            type: "typing",
+            content: "0",
+            to: this.activeChat.channel_name,
+            key: this.activeChat.channel_key,
             status: 0,
             size: 0,
-            type: "typing",
             isGroupMessage: false,
             from: StorageService.getAuthUsername(),
-            content: "0",
             id: new Date().getTime().toString(),
-            key: this.activeChat.channel_key,
-            to: this.activeChat.channel_name,
             date: new Date().getTime(),
           };
           this.pubsubService.sendMessage(sendMessage);
@@ -360,12 +366,7 @@ export class ChatComponent implements OnInit {
 
         let i = this.AllGroups.findIndex((g) => g.id === group.id);
         this.AllGroups.splice(i, 1);
-        console.log("TTTT ** delete group: ", this.AllGroups, {group}, i);
-        
-
-
-
-
+        console.log("TTTT ** delete group: ", this.AllGroups, { group }, i);
 
         //AMB
         let participants_ref_ids = [];
@@ -381,7 +382,7 @@ export class ChatComponent implements OnInit {
         this.pubsubService.sendNotificationOnGroupUpdation(groupInfo);
         //ABM
 
-        //this.getAllGroups(); //commented because all groups updated and chat removed 
+        //this.getAllGroups(); //commented because all groups updated and chat removed
         this.activeChat = {};
         this.loading = false;
         this.toastr.success("The group has been deleted!", "Success!");
@@ -407,7 +408,9 @@ export class ChatComponent implements OnInit {
         return r;
       });
     }
-    chat["chatTitle"] = chat.auto_created? chat.group_title.split("-")[1]: chat.group_title;
+    chat["chatTitle"] = chat.auto_created
+      ? chat.group_title.split("-")[1]
+      : chat.group_title;
     //chat.auto_created? chat["participants"][0]["full_name"] : chat.group_title;
     chat["Online"] = false;
     chat["key"] = chat.channel_key;
@@ -418,7 +421,11 @@ export class ChatComponent implements OnInit {
     chat["isSeen"] = true;
 
     this.AllGroups.push(chat);
-    console.log("aaa allgroups:\n\n", this.AllGroups, chat["participants"][0]["full_name"]);
+    console.log(
+      "aaa allgroups:\n\n",
+      this.AllGroups,
+      chat["participants"][0]["full_name"]
+    );
     //======================//
     // **** Subscribing group ****:
     let subscribedata = {
@@ -441,7 +448,6 @@ export class ChatComponent implements OnInit {
       this.setToActive = null;
     }
     this.isActiveThread = true;
-    
 
     setTimeout(() => {
       this.sortThread();
@@ -516,16 +522,13 @@ export class ChatComponent implements OnInit {
     this.readsendMessage(group.chatHistory);
     this.changeDetector.detectChanges();
   }
-  //Called when group created: 
+  //Called when group created:
   setchat(chat) {
     console.log("**** aaaa - setChat: ", chat);
 
     this.setToActive = chat.id; //chat.id
     this.addNewGroupToAllGroup(chat);
   }
-  
-
-
 
   openModal(group) {
     if (group.auto_created) {
@@ -572,8 +575,8 @@ export class ChatComponent implements OnInit {
       .filter((chat) => !chat.isRead)
       .map((chat) => {
         const chatobj: receiptModel = {
-          messageId: chat.id,
           receiptType: 3,
+          messageId: chat.id,
           from: StorageService.getAuthUsername(),
           key: chat.key,
           to: chat.to,
@@ -598,6 +601,8 @@ export class ChatComponent implements OnInit {
     this.fileToSend = null;
   }
   getFileType(fileR) {
+    console.log("*** file type", fileR);
+    return;
     let type = "file";
     const filetype = fileR.type;
     if (filetype.includes("image")) type = "image";
@@ -619,30 +624,51 @@ export class ChatComponent implements OnInit {
     this.scroll();
     if (!this.message && !this.fileToSend) return;
     if (this.fileToSend) {
-      const option = {
-        id: new Date().getTime().toString(),
-        from: StorageService.getAuthUsername(),
-        topic: this.activeChat.channel_name,
-        to: this.activeChat.channel_name,
-        key: this.activeChat.channel_key,
-        type: this.getFileType(this.fileToSend),
-        date: new Date().getTime(),
-      };
-      this.pubsubService.Client.SendFile(this.fileToSend, option);
+      //------- Changing File Sharing Procedure -------//
+      let formData = new FormData(); // Currently empty
+      formData.append("type", "ftp");
+      formData.append("uploadFile", this.fileToSend);
+      formData.append("auth_token", this.currentUserData.auth_token);
+      formData.append("request_type", "web");
+      axios
+        .post(`https://q-tenant.vdotok.dev/s3upload/`, formData)
+        .then((response: any) => {
+          if (response.data.status === 200) {
+            const option = {
+              type: "ftp", //this.getFileType(this.fileToSend), //
+              content: response.data.file_name,
+              to: this.activeChat.channel_name,
+              key: this.activeChat.channel_key,
+              subType: 0,
+              id: new Date().getTime().toString(),
+              from: StorageService.getAuthUsername(),
+              topic: this.activeChat.channel_name,
+              date: new Date().getTime(),
+              status: 1,
+            };
+            console.log("**** ffffff file sharing:  ", option, this.fileToSend);
+
+            this.pubsubService.sendMessage(option);
+          }
+        });
       this.fileToSend = null;
+      //------- Changing File Sharing Procedure -------//
+
+      return;
+      // this.pubsubService.Client.SendFile(this.fileToSend, option);
     }
     if (!this.message) return;
     const sendMessage: MessageModel = {
+      type: "text",
+      content: this.message,
+      to: this.activeChat.channel_name,
+      key: this.activeChat.channel_key,
       status: 1,
       size: 0,
-      type: "text",
       isGroupMessage: false,
       from: StorageService.getAuthUsername(),
-      content: this.message,
       id: new Date().getTime().toString(),
       date: new Date().getTime(),
-      key: this.activeChat.channel_key,
-      to: this.activeChat.channel_name,
     };
     this.pubsubService.sendMessage(sendMessage);
     this.message = "";
@@ -653,25 +679,27 @@ export class ChatComponent implements OnInit {
       this.sortThread();
     }
   }
+
   typingmessage($event) {
     if ($event.key === "Enter") {
       this.sendTextMessage();
       return;
     }
     const sendMessage: MessageModel = {
+      type: "typing",
+      content: "1",
+      to: this.activeChat.channel_name,
+      key: this.activeChat.channel_key,
       status: 0,
       size: 0,
-      type: "typing",
       isGroupMessage: false,
       from: StorageService.getAuthUsername(),
-      content: "1",
       id: new Date().getTime().toString(),
-      key: this.activeChat.channel_key,
-      to: this.activeChat.channel_name,
       date: new Date().getTime(),
     };
     this.pubsubService.sendMessage(sendMessage);
   }
+
   setOnlineStatusforSubscribe(response: onlineOfflineModel) {
     const indexchat = this.findChatThread(response.channel);
     if (indexchat) {
@@ -801,7 +829,8 @@ export class ChatComponent implements OnInit {
   pushMessage(thread, response) {
     let newResponse = {};
     newResponse = JSON.parse(JSON.stringify(response));
-    if (response.type == "text" || !response.content) {
+    if (response.type == "text" || response.content) {
+      //!response.content
       thread["chatHistory"].push(newResponse);
     } else {
       const foundIndex = thread.chatHistory.findIndex(
@@ -814,9 +843,13 @@ export class ChatComponent implements OnInit {
     const isactivethread = group.id == this.activeChat.id;
     if (!isactivethread && group.unReadCount) {
       return "Misread messages";
-    } else if (group.type != "text") {
-      return group.type;
+    } else if (group.type === "ftp") {
+      return "File";
     }
+    //Commented due to change of file sharing method ftp:=
+    // else if (group.type != "text") {
+    //   return group.type;
+    // }
     return group.lastMessage;
   }
   openImage(imagesrc): void {
