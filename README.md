@@ -138,6 +138,6 @@ Run the below command to generate a “build”:
 
 ### Integrate SDK in your project:
 
-To setup audio/video call in your project please follow the detailed documentation here
+To setup chat sdk in your project please follow the detailed documentation here
 
 Click on this link -> <a href = "https://doc.vdotok.com/" target = "_blank"> https://doc.vdotok.com/</a>
