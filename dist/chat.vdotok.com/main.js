@@ -1646,7 +1646,7 @@ class ChatComponent {
       formData.append("uploadFile", this.fileToSend);
       formData.append("auth_token", this.currentUserData.auth_token);
       formData.append("request_type", "web");
-      axios__WEBPACK_IMPORTED_MODULE_15__["default"].post(`https://q-tenant.vdotok.dev/s3upload/`, formData).then(response => {
+      axios__WEBPACK_IMPORTED_MODULE_15__["default"].post(`https://tenant.vdotok.com/s3upload/`, formData).then(response => {
         if (response.data.status === 200) {
           const option = {
             type: "ftp",
@@ -2286,7 +2286,7 @@ class LoginComponent {
     _shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_1__["default"].validateForm(this.loginForm);
     if (this.loginForm.invalid) return;
     const saveData = this.loginForm.value;
-    saveData.project_id = src_constants_const__WEBPACK_IMPORTED_MODULE_2__.project_id; //'1RN1RP';
+    saveData.project_id = src_constants_const__WEBPACK_IMPORTED_MODULE_2__.project_id; //'1KMMRG';
     this.loading = true;
     this.formError = null;
     this.auth.login(saveData).subscribe(v => {
@@ -2424,7 +2424,7 @@ class SignUpComponent {
     _shared_FormsHandler_FormsHandler__WEBPACK_IMPORTED_MODULE_0__["default"].validateForm(this.loginForm);
     if (this.loginForm.invalid) return;
     const saveData = this.loginForm.value;
-    saveData.project_id = src_constants_const__WEBPACK_IMPORTED_MODULE_3__.project_id; //'1RN1RP';
+    saveData.project_id = src_constants_const__WEBPACK_IMPORTED_MODULE_3__.project_id; //'1KMMRG';
     this.loading = true;
     this.formError = null;
     this.auth.signup(saveData).subscribe(v => {
@@ -3728,7 +3728,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "project_id": () => (/* binding */ project_id)
 /* harmony export */ });
-const project_id = "1RN1RP";
+const project_id = "1KMMRG";
 
 /***/ }),
 
@@ -3747,7 +3747,7 @@ __webpack_require__.r(__webpack_exports__);
 // The list of file replacements can be found in `angular.json`.
 const environment = {
   production: false,
-  apiBaseUrl: "https://q-tenant.vdotok.dev",
+  apiBaseUrl: "https://tenant.vdotok.com",
   version: "/API/v0/"
 };
 /*

@@ -631,7 +631,7 @@ export class ChatComponent implements OnInit {
       formData.append("auth_token", this.currentUserData.auth_token);
       formData.append("request_type", "web");
       axios
-        .post(`https://q-tenant.vdotok.dev/s3upload/`, formData)
+        .post(`https://tenant.vdotok.com/s3upload/`, formData)
         .then((response: any) => {
           if (response.data.status === 200) {
             const option = {
