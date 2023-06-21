@@ -72,7 +72,7 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **API
 
 1. Click on this link -> <a href="https://vdotok.com" target="_blank">https://vdotok.com</a> in your browser.
 
-<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
+<img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/e26456f7-ee6a-4170-bf22-fac06ed6ae1d">
 
 2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
