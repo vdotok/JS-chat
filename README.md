@@ -74,7 +74,6 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **API
 
 <img width="1721" alt="SignupVdotok" src="https://github.com/vdotok/JS-chat/assets/134290022/d0093296-71ff-43b3-9992-1199aecc786b">
 
-
 2. Click on the "TRY FOR FREE" button, this will navigate to Sign Up page, where the User is required to enter the following information: First Name > Last Name > Email > Country > Password. Select Sign Up For Free button
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184070989-e8b26d85-6e64-4ef3-b6d7-56449738236c.jpg)
@@ -85,18 +84,15 @@ Register at <a href="https://vdotok.com" target="_blank">VdoTok</a> to get **API
 
 ![My Remote Image](https://user-images.githubusercontent.com/87179594/184071060-9909513b-f880-4de8-9481-6ab91ae2be95.jpg)
 
-
 </br>
 
 ## Add PROJECT ID and API URL.
-
 
 ### To integrate messaging with JS Chat SDK, the User can update the projectID by following these steps.
 
 - Go to the file ( JS-CHAT -> src -> constants -> const.ts ).
 
 - Replace the **project_id** constant with your project ID.
-
 
 ### Base URL
 
@@ -118,7 +114,7 @@ Please refer to the above-stated npm and nvm version notes.
   npm install
 ```
 
-- Now run the following command to run the project: 
+- Now run the following command to run the project:
 
 ```shell
   ng serve
@@ -132,7 +128,7 @@ Please refer to the above-stated npm and nvm version notes.
 
 ## How to Generate Build:
 
-Run the below command to generate a “build”: 
+Run the below command to generate a “build”:
 
 ```shell
   npm run build
@@ -140,4 +136,8 @@ Run the below command to generate a “build”:
 
 </br>
 
+### Integrate SDK in your project:
 
+To setup audio/video call in your project please follow the detailed documentation here
+
+Click on this link -> <a href = "https://doc.vdotok.com/" target = "_blank"> https://doc.vdotok.com/</a>
