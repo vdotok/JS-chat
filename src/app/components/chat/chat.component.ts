@@ -32,6 +32,7 @@ import {
   typingModel,
 } from "src/app/shared/models/chat";
 import axios from "axios";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "chat",
@@ -127,34 +128,38 @@ export class ChatComponent implements OnInit {
 
     this.pubsubService.Client.on("message", (response) => {
       response = JSON.parse(JSON.stringify(response));
-      console.log("*** on-message response: \n\n", response);
+      console.log("**** on-message response: \n\n", response);
 
       //console.trace("new message", response);
       if (response.data) {
         this.updateGroup(response);
       }
-      if (
-        response.type == "text" ||
-        response.type == "ftp" ||
-        response.type == "file" ||
-        response.type == "image" ||
-        response.type == "audio" ||
-        response.type == "video"
-      ) {
-        this.scroll();
+      if (response.type == "text" || response.type == "ftp" || response.type == "file" || response.type == "image" || response.type == "audio" ||response.type == "video")
+      {
+        //console.log("**** on-message response: \n\n", response);
 
+
+        this.scroll();
         const chatthread = this.findChatThread(response.to);
 
         const isActiveThread = chatthread.id == this.activeChat.id;
-        chatthread["unReadCount"] = isActiveThread
-          ? 0
-          : (chatthread["unReadCount"] || 0) + 1;
+        chatthread["unReadCount"] = isActiveThread? 0 : (chatthread["unReadCount"] || 0) + 1;
         response = this.messageBy(chatthread, response);
         response["isRead"] = isActiveThread;
         response["auto_created"] = chatthread["auto_created"];
         chatthread["lastMessage"] = response.content;
         chatthread["time"] = new Date(response.id);
         chatthread["type"] = response.type;
+        if(response.subType) {
+          response["subType"] = response.subType;
+          chatthread["subType"] = response.subType;
+
+        }
+
+        //console.log("****asdfghjkjhgfds:\n", {response}, {chatthread});
+        
+
+
         this.pushMessage(chatthread, response);
         this.readSingleMessage(response, isActiveThread);
         setTimeout(() => {
@@ -210,6 +215,24 @@ export class ChatComponent implements OnInit {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   updateGroup(grp_info) {
     let new_group = grp_info.data.groupModel.group;
     console.log(
@@ -242,9 +265,14 @@ export class ChatComponent implements OnInit {
             return r;
           });
         }
+
+
         chat["chatTitle"] = chat.auto_created
-          ? chat["participants"][0]["full_name"]
+          ? chat.group_title.split("-")[0]//chat["participants"][0]["full_name"]
           : chat.group_title;
+
+
+
         chat["Online"] = false;
         chat["key"] = chat.channel_key;
         chat["channel"] = chat.channel_name;
@@ -253,12 +281,12 @@ export class ChatComponent implements OnInit {
         chat["onlineParticipants"] = 1;
         chat["isSeen"] = true;
         console.log(
-          "!!! final grp before pushing: \n\n",
-          this,
+          "!!!mmmmmmmmmm final grp before pushing: \n\n",
+          // this,
           "\n",
           chat,
           "\n\n",
-          this.AllGroups
+          // this.AllGroups
         );
 
         this.AllGroups.push(chat);
@@ -309,6 +337,17 @@ export class ChatComponent implements OnInit {
       }
     }
   }
+
+
+
+
+
+
+
+
+
+
+
   editGroup() {
     FormsHandler.validateForm(this.groupForm);
     console.error("this.groupForm.", this.groupForm.invalid);
@@ -541,15 +580,19 @@ export class ChatComponent implements OnInit {
     this.changeDetector.detectChanges();
   }
   checkFileType(content: any) {
-    let preview = content.includes("text/plain")
+    let preview = content.includes("txt")  //text/plain
       ? "./assets/images/txt.png"
-      : content.includes("/pdf")
+      : content.includes("pdf")
       ? "./assets/images/pdf.png"
-      : content.includes("/json")
+      : content.includes("json")
       ? "./assets/images/json.png"
-      : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Icon-doc.svg/810px-Icon-doc.svg.png";
-    if (content.includes("video/")) preview = "./assets/images/video.png";
-    if (content.includes("audio/")) preview = "./assets/images/audio.png";
+      : "./assets/images/Document.png"//"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Icon-doc.svg/810px-Icon-doc.svg.png";
+
+
+    //if (content.includes("video/")) preview = "./assets/images/video.png";
+    //if (content.includes("audio/")) preview = "./assets/images/audio.png";
+    //console.log("**** file preview: ", content, "\n", preview);
+    
     return preview;
   }
   fileType(content: any) {
@@ -600,16 +643,9 @@ export class ChatComponent implements OnInit {
   removeAttachment() {
     this.fileToSend = null;
   }
-  getFileType(fileR) {
-    console.log("*** file type", fileR);
-    return;
-    let type = "file";
-    const filetype = fileR.type;
-    if (filetype.includes("image")) type = "image";
-    else if (filetype.includes("audio")) type = "audio";
-    else if (filetype.includes("video")) type = "video";
-    return type;
-  }
+
+
+
   sendTextMessage() {
     if (!/\S/.test(this.message) && !this.fileToSend) {
       return;
@@ -623,36 +659,56 @@ export class ChatComponent implements OnInit {
     }
     this.scroll();
     if (!this.message && !this.fileToSend) return;
+
+
+    // ************ Sending file here ************ : 
     if (this.fileToSend) {
-      //------- Changing File Sharing Procedure -------//
+      //------- Changing File Sharing Procedure to FTP -------//
       let formData = new FormData(); // Currently empty
+      let ext = this.getExtension(this.fileToSend.name);
+      let subtype = this.getFileType(this.fileToSend);
+      let sizeOfFile = this.fileToSend.size;
+
+
       formData.append("type", "ftp");
       formData.append("uploadFile", this.fileToSend);
       formData.append("auth_token", this.currentUserData.auth_token);
       formData.append("request_type", "web");
+      formData.append("extension", ext);
+
+
+    
+      // subtype = this.getFileType(this.fileToSend);
+      // sizeOfFile = this.fileToSend.size;
+      console.log("**** Name of the selected file:    ", this.fileToSend.name,"\n\nFile:  ",this.fileToSend.size, "\n\nSubType:     ", subtype, "\n\nExtention:     ", ext);
+
+      
       axios
-        .post(`https://q-tenant.vdotok.dev/s3upload/`, formData)
+        .post(`${environment.apiBaseUrl}s3upload/`, formData)
         .then((response: any) => {
           if (response.data.status === 200) {
             const option = {
-              type: "ftp", //this.getFileType(this.fileToSend), //
+              type: "ftp",
               content: response.data.file_name,
               to: this.activeChat.channel_name,
               key: this.activeChat.channel_key,
-              subType: 0,
+              subType: subtype, //0
               id: new Date().getTime().toString(),
               from: StorageService.getAuthUsername(),
               topic: this.activeChat.channel_name,
               date: new Date().getTime(),
               status: 1,
+              isGroupMessage: false,
+              size: sizeOfFile,//0,
+
             };
-            console.log("**** ffffff file sharing:  ", option, this.fileToSend);
+            console.log("**** OPTIONS:  \n\n", option);
 
             this.pubsubService.sendMessage(option);
           }
         });
       this.fileToSend = null;
-      //------- Changing File Sharing Procedure -------//
+      //------- Changing File Sharing Procedure to FTP -------//
 
       return;
       // this.pubsubService.Client.SendFile(this.fileToSend, option);
@@ -680,6 +736,82 @@ export class ChatComponent implements OnInit {
     }
   }
 
+
+
+  getExtension(filename) {
+    return filename.split(".").pop();
+  }
+  getFileType(fileR) {
+    //All cross platforms following these ENUMS:
+    // int image = 0;
+    // int audio = 1;
+    // int video = 2; 
+    // int file = 3; 
+    let type = 3; //"file";
+    const filetype = fileR.type;
+    // console.log("*** file type", fileR, filetype);
+    if (filetype.includes("image")) type = 0;//"image";
+    else if (filetype.includes("audio")) type = 1;//"audio";
+    else if (filetype.includes("video")) type = 2//"video";
+    return type;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   typingmessage($event) {
     if ($event.key === "Enter") {
       this.sendTextMessage();
