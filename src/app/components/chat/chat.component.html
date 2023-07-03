@@ -119,11 +119,35 @@
 
               <div *ngIf="chat.type !=='text' && chat.type ==='ftp'" class="imgbubble file-attachment" >
                 <mat-spinner [diameter]="50" *ngIf="!chat.content"></mat-spinner>
+
+
                 <ng-container *ngIf="chat.content">
-                  <img [src]="checkFileType(chat.content)" class="w-100 msgImage thumbnail img-fluid" />
+
+                  <img *ngIf="chat.subType == 0" [src]="chat.content" style="width: 220px; height: 120px;"/>
+
+
+                  <audio *ngIf="chat.subType == 1" controls="true">
+                    <source [src]="chat.content">
+                  </audio> 
+
+
+                  <video *ngIf="chat.subType == 2" controls="true" style="width: 220px; height: 120px;">
+                    <source [src]="chat.content">
+                  </video>
+
+                  
+                  <img *ngIf="chat.subType == 3" [src]="checkFileType(chat.content)" class="w-100 msgImage thumbnail img-fluid" />
+
+
                   <a [href]="chat.content | safeUrl" download>Download</a>
                 </ng-container>
               </div>
+
+
+
+
+
+
 
 
 
