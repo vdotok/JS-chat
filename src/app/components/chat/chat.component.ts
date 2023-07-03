@@ -133,22 +133,17 @@ export class ChatComponent implements OnInit {
       if (response.data) {
         this.updateGroup(response);
       }
-      if (
-        response.type == "text" ||
-        response.type == "ftp" ||
-        response.type == "file" ||
-        response.type == "image" ||
-        response.type == "audio" ||
-        response.type == "video"
-      ) {
+      if (response.type == "text" || response.type == "ftp" || response.type == "file" || response.type == "image" || response.type == "audio" || response.type == "video") 
+      {
         this.scroll();
 
         const chatthread = this.findChatThread(response.to);
-
+      
         const isActiveThread = chatthread.id == this.activeChat.id;
-        chatthread["unReadCount"] = isActiveThread
-          ? 0
-          : (chatthread["unReadCount"] || 0) + 1;
+        chatthread["unReadCount"] = isActiveThread? 0 : (chatthread["unReadCount"] || 0) + 1;
+
+
+
         response = this.messageBy(chatthread, response);
         response["isRead"] = isActiveThread;
         response["auto_created"] = chatthread["auto_created"];
@@ -169,15 +164,17 @@ export class ChatComponent implements OnInit {
       //---------------------------------//
       else if (response.type == "typing") {
         this.setUserTyping(response);
-      } else if (response.receiptType == 3) {
+      } 
+      
+      
+      
+      else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
         if (response.to != undefined) chName = response.to;
         const chatthread = this.findChatThread(chName);
-        const message = FindArrayObject(
-          chatthread.chatHistory,
-          "id",
-          response.messageId
-        );
+        const message = FindArrayObject(chatthread.chatHistory, "id", response.messageId);
+        console.log("**** message:\n\n", message);
+
         if (message) {
           message["readCount"] = (message["readCount"] || 0) + 1;
         }
