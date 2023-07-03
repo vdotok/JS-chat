@@ -9,7 +9,7 @@ import { BaseService } from './base.service';
 
 @Injectable()
 export class HttpService implements HttpInterceptor {
-    private baseUrl = environment.apiBaseUrl + environment.version;
+    private baseUrl = environment.apiBaseUrl;
 
     constructor(
         private router: Router,
