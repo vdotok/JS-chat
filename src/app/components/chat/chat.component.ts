@@ -213,16 +213,14 @@ export class ChatComponent implements OnInit {
   updateGroup(grp_info) {
     let new_group = grp_info.data.groupModel.group;
     console.log(
-      "$$$$ in update group function \n\n",
+      "**** in update group function \n\n",
       { grp_info },
       { new_group }
     );
 
-    // return;
+
     if (grp_info.data.action == "new") {
-      let i = this.AllGroups.findIndex(
-        (grp) => grp.channel_name == new_group.channel_name
-      );
+      let i = this.AllGroups.findIndex((grp) => grp.channel_name == new_group.channel_name);
 
       if (i === -1) {
         let chat = grp_info.data.groupModel.group;
@@ -232,8 +230,10 @@ export class ChatComponent implements OnInit {
         };
         let data = [];
         data.push(subscribedata);
+
+        console.log("**** new incoming grp subs:\n\n", data);
+
         this.pubsubService.subscribeToChat(data);
-        console.log("!!!!!! grp", subscribedata);
 
         //this.pubsubService.subscribeToChat(data);
         if (chat["participants"].length) {
@@ -272,6 +272,13 @@ export class ChatComponent implements OnInit {
       }
     }
 
+
+
+
+
+
+
+
     if (grp_info.data.action == "delete") {
       //console.log("$$ group deleted successfully-before\n" , this.AllGroups);
       // let cn = grp_info.data.groupModel;
@@ -296,7 +303,6 @@ export class ChatComponent implements OnInit {
         !this.activeChat.chatTitle && !this.loading
       ); //{new_group}, {index}, this.AllGroups
     }
-
     if (grp_info.data.action == "modify") {
       let grp_ind = this.AllGroups.findIndex(
         (g) => g.channel_name === new_group.channel_name
@@ -309,6 +315,15 @@ export class ChatComponent implements OnInit {
       }
     }
   }
+
+
+
+
+
+
+
+
+
   editGroup() {
     FormsHandler.validateForm(this.groupForm);
     console.error("this.groupForm.", this.groupForm.invalid);

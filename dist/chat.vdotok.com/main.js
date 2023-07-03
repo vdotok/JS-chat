@@ -429,8 +429,10 @@ class AddGroupComponent {
     this.changeDetector.detectChanges();
   }
   openDialog(content) {
+    console.log("**** openDialog:\n\n");
     this.groupnameError = "";
     this.selectedUsers = this.selectedUsers.filter(user => user.selected);
+    console.log("**** selected users length\n\n", this.selectedUsers);
     this.changeDetector.detectChanges();
     if (!this.selectedUsers.length) {
       this.groupnameError = "Please Select Contacts";
@@ -439,7 +441,7 @@ class AddGroupComponent {
       this.groupnameError = "Participants cannot be more than 4";
       return;
     }
-    if (this.selectedUsers.length == 1) {
+    if (this.selectedUsers.length == 0) {
       const useridArray = this.selectedUsers.map(user => user.user_id);
       const data = {
         participants: useridArray,
@@ -478,12 +480,15 @@ class AddGroupComponent {
     this.changeDetector.detectChanges();
     let data = {
       participants: useridArray,
-      auto_created: useridArray.length > 1 ? 0 : 1
+      auto_created: 0 //useridArray.length > 1 ? 0 : 1
+      //commented this because in case of group chat auto_created is always equal to 0:  useridArray.length > 1 ? 0 : 1,
     };
+
     data = {
       ...data,
       ...this.form.value
     };
+    console.log("**** group case:\n\n  ", data);
     this.svc.post("CreateGroup", data).subscribe(v => {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
@@ -1300,12 +1305,11 @@ class ChatComponent {
   }
   updateGroup(grp_info) {
     let new_group = grp_info.data.groupModel.group;
-    console.log("$$$$ in update group function \n\n", {
+    console.log("**** in update group function \n\n", {
       grp_info
     }, {
       new_group
     });
-    // return;
     if (grp_info.data.action == "new") {
       let i = this.AllGroups.findIndex(grp => grp.channel_name == new_group.channel_name);
       if (i === -1) {
@@ -1316,8 +1320,8 @@ class ChatComponent {
         };
         let data = [];
         data.push(subscribedata);
+        console.log("**** new incoming grp subs:\n\n", data);
         this.pubsubService.subscribeToChat(data);
-        console.log("!!!!!! grp", subscribedata);
         //this.pubsubService.subscribeToChat(data);
         if (chat["participants"].length) {
           chat["participants"] = chat["participants"].map(r => {
