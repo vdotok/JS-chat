@@ -134,14 +134,12 @@ export class ChatComponent implements OnInit {
       if (response.data) {
         this.updateGroup(response);
       }
-      if (response.type == "text" || response.type == "ftp" || response.type == "file" || response.type == "image" || response.type == "audio" ||response.type == "video")
+
+      if (response.type == "text" || response.type == "ftp" || response.type == "file" || response.type == "image" || response.type == "audio" || response.type == "video") 
       {
-        //console.log("**** on-message response: \n\n", response);
-
-
         this.scroll();
         const chatthread = this.findChatThread(response.to);
-
+      
         const isActiveThread = chatthread.id == this.activeChat.id;
         chatthread["unReadCount"] = isActiveThread? 0 : (chatthread["unReadCount"] || 0) + 1;
         response = this.messageBy(chatthread, response);
@@ -174,15 +172,17 @@ export class ChatComponent implements OnInit {
       //---------------------------------//
       else if (response.type == "typing") {
         this.setUserTyping(response);
-      } else if (response.receiptType == 3) {
+      } 
+      
+      
+      
+      else if (response.receiptType == 3) {
         let chName = response.topic || response.to;
         if (response.to != undefined) chName = response.to;
         const chatthread = this.findChatThread(chName);
-        const message = FindArrayObject(
-          chatthread.chatHistory,
-          "id",
-          response.messageId
-        );
+        const message = FindArrayObject(chatthread.chatHistory, "id", response.messageId);
+        console.log("**** message:\n\n", message);
+
         if (message) {
           message["readCount"] = (message["readCount"] || 0) + 1;
         }
@@ -215,37 +215,17 @@ export class ChatComponent implements OnInit {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   updateGroup(grp_info) {
     let new_group = grp_info.data.groupModel.group;
     console.log(
-      "$$$$ in update group function \n\n",
+      "**** in update group function \n\n",
       { grp_info },
       { new_group }
     );
 
-    // return;
+
     if (grp_info.data.action == "new") {
-      let i = this.AllGroups.findIndex(
-        (grp) => grp.channel_name == new_group.channel_name
-      );
+      let i = this.AllGroups.findIndex((grp) => grp.channel_name == new_group.channel_name);
 
       if (i === -1) {
         let chat = grp_info.data.groupModel.group;
@@ -255,8 +235,10 @@ export class ChatComponent implements OnInit {
         };
         let data = [];
         data.push(subscribedata);
+
+        console.log("**** new incoming grp subs:\n\n", data);
+
         this.pubsubService.subscribeToChat(data);
-        console.log("!!!!!! grp", subscribedata);
 
         //this.pubsubService.subscribeToChat(data);
         if (chat["participants"].length) {
@@ -300,6 +282,13 @@ export class ChatComponent implements OnInit {
       }
     }
 
+
+
+
+
+
+
+
     if (grp_info.data.action == "delete") {
       //console.log("$$ group deleted successfully-before\n" , this.AllGroups);
       // let cn = grp_info.data.groupModel;
@@ -324,7 +313,6 @@ export class ChatComponent implements OnInit {
         !this.activeChat.chatTitle && !this.loading
       ); //{new_group}, {index}, this.AllGroups
     }
-
     if (grp_info.data.action == "modify") {
       let grp_ind = this.AllGroups.findIndex(
         (g) => g.channel_name === new_group.channel_name
@@ -337,16 +325,6 @@ export class ChatComponent implements OnInit {
       }
     }
   }
-
-
-
-
-
-
-
-
-
-
 
   editGroup() {
     FormsHandler.validateForm(this.groupForm);
@@ -756,62 +734,6 @@ export class ChatComponent implements OnInit {
     return type;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
   typingmessage($event) {
     if ($event.key === "Enter") {
       this.sendTextMessage();

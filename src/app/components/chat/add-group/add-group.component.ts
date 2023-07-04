@@ -167,8 +167,13 @@ export class AddGroupComponent implements OnInit {
   }
 
   openDialog(content): void {
+    console.log("**** openDialog:\n\n");
+    
+    
     this.groupnameError = "";
     this.selectedUsers = this.selectedUsers.filter((user) => user.selected);
+    console.log("**** selected users length\n\n", this.selectedUsers);
+
     this.changeDetector.detectChanges();
     if (!this.selectedUsers.length) {
       this.groupnameError = "Please Select Contacts";
@@ -177,7 +182,7 @@ export class AddGroupComponent implements OnInit {
       this.groupnameError = "Participants cannot be more than 4";
       return;
     }
-    if (this.selectedUsers.length == 1) {
+    if (this.selectedUsers.length == 0) {
       const useridArray = this.selectedUsers.map((user) => user.user_id);
       const data = {
         participants: useridArray,
@@ -196,7 +201,8 @@ export class AddGroupComponent implements OnInit {
         this.loading = false;
         this.changeEvent.emit({ event: "THREAD", group: v.group });
       });
-    } else {
+    } 
+    else {
       this.addGroupModel = true;
     }
   }
@@ -214,12 +220,15 @@ export class AddGroupComponent implements OnInit {
     this.changeDetector.detectChanges();
     let data = {
       participants: useridArray,
-      auto_created: useridArray.length > 1 ? 0 : 1,
+      auto_created: 0 //useridArray.length > 1 ? 0 : 1
+      //commented this because in case of group chat auto_created is always equal to 0:  useridArray.length > 1 ? 0 : 1,
     };
     data = {
       ...data,
       ...this.form.value,
     };
+    console.log("**** group case:\n\n  ", data);
+    
     this.svc.post("CreateGroup", data).subscribe((v) => {
       this.changeDetector.detectChanges();
       if (v && v.status == 200) {
