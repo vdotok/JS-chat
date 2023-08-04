@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  apiBaseUrl: "https://tenant.vdotok.com",
-  version: "/API/v0/",
+  apiBaseUrl: "https://tenant.vdotok.com/API/v0/",
 };
 
 /*
